@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>RustWeb</title>
+<meta charset="utf-8" />
+<meta property="og:image" content="/map.jpg">
+<link rel="stylesheet" href="css/main.css" />
+<link rel="shortcut icon" href="favicon.ico" />
+<script src="js/jquery.min.js"></script>
+<script src="js/openid.js"></script>
+</head>
+<body>
+<div id="header">
+    <div class="info">
+        <span id="level">Procedural Map</span> &nbsp; &nbsp;
+        <span id="numplayers">0</span> / <span id="maxplayers">0</span> players  &nbsp; &nbsp;
+        <span id="sleepers">0</span> sleepers<span class="signinOpt"> &nbsp; &nbsp;
+        <a id="signin" href="/signin"><img src="img/sits_small.png" alt="Sign in through STEAM" /></a></span>
+    </div>
+    <h1><span id="hostname">Rust Server</span></h1>
+</div>
+<div id="container">
+    <div id="map" style="background-image: url(map.jpg); background-position: 10px 10px;">
+        <canvas id="buildings" width="1000" height="1000"></canvas>
+        <div id="monuments"></div>
+    </div>
+    <p>
+        Display: &nbsp;
+        <label for="monuments-checkbox"><input id="monuments-checkbox" type="checkbox" checked="checked" /> Monuments</label> &nbsp;
+        <span class="buildingsOpt" style="display: none"><label for="buildings-checkbox"><input id="buildings-checkbox" type="checkbox" checked="checked" /> Buildings</label></span>
+    </p>
+</div>
+<div id="footer">
+    <p><a title="The Web Plugin for Rust" href="http://github.com/dcodeIO/RustWeb">RustWeb</a> by <a href="http://dcode.io">dcode</a></p>
+    <p class="disc">RustWeb is not affiliated with, nor endorsed by Facepunch Studios LTD. All trademarks belong to their respective owners.</p>
+</div>
+<script src="js/main.js"></script>
+</body>
+</html>

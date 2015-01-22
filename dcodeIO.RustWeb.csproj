@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{268E9FB5-274B-405A-884F-079814E3983C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>dcodeIO.RustWeb</RootNamespace>
+    <AssemblyName>dcodeIO.RustWeb</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>Dependencies\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Facepunch">
+      <HintPath>Dependencies\Facepunch.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Dependencies\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>Dependencies\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\Cache.cs" />
+    <Compile Include="src\DataUtil.cs" />
+    <Compile Include="src\DeferredRequest.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\BZip2\BZip2.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\BZip2\BZip2Constants.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\BZip2\BZip2Exception.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\BZip2\BZip2InputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\BZip2\BZip2OutputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Checksums\Adler32.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Checksums\CRC32.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Checksums\IChecksum.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Checksums\StrangeCRC.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Core\FileSystemScanner.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Core\INameTransform.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Core\IScanFilter.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Core\NameFilter.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Core\PathFilter.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Core\StreamUtils.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Core\WindowsPathUtils.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Encryption\PkzipClassic.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Encryption\ZipAESStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Encryption\ZipAESTransform.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\GZip\GZIPConstants.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\GZip\GZipException.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\GZip\GzipInputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\GZip\GzipOutputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Lzw\LzwConstants.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Lzw\LzwException.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Lzw\LzwInputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Main.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\SharpZipBaseException.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Tar\InvalidHeaderException.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Tar\TarArchive.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Tar\TarBuffer.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Tar\TarEntry.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Tar\TarException.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Tar\TarHeader.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Tar\TarInputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Tar\TarOutputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\Deflater.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\DeflaterConstants.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\DeflaterEngine.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\DeflaterHuffman.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\DeflaterPending.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\Inflater.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\InflaterDynHeader.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\PendingBuffer.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\FastZip.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\IEntryFactory.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\WindowsNameTransform.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipConstants.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipEntry.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipEntryFactory.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipException.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipExtraData.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipFile.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipHelperStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipInputStream.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipNameTransform.cs" />
+    <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="src\OpenID.cs" />
+    <Compile Include="src\RconUtil.cs" />
+    <Compile Include="src\Session.cs" />
+    <Compile Include="src\WebSocket.cs" />
+    <Compile Include="src\LogMessage.cs" />
+    <Compile Include="src\MapUtil.cs" />
+    <Compile Include="src\RustWeb.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="lib\websocket-sharp\ByteOrder.cs" />
+    <Compile Include="lib\websocket-sharp\CloseEventArgs.cs" />
+    <Compile Include="lib\websocket-sharp\CloseStatusCode.cs" />
+    <Compile Include="lib\websocket-sharp\CompressionMethod.cs" />
+    <Compile Include="lib\websocket-sharp\ErrorEventArgs.cs" />
+    <Compile Include="lib\websocket-sharp\Ext.cs" />
+    <Compile Include="lib\websocket-sharp\Fin.cs" />
+    <Compile Include="lib\websocket-sharp\HttpBase.cs" />
+    <Compile Include="lib\websocket-sharp\HttpRequest.cs" />
+    <Compile Include="lib\websocket-sharp\HttpResponse.cs" />
+    <Compile Include="lib\websocket-sharp\LogData.cs" />
+    <Compile Include="lib\websocket-sharp\Logger.cs" />
+    <Compile Include="lib\websocket-sharp\LogLevel.cs" />
+    <Compile Include="lib\websocket-sharp\Mask.cs" />
+    <Compile Include="lib\websocket-sharp\MessageEventArgs.cs" />
+    <Compile Include="lib\websocket-sharp\Net\AuthenticationBase.cs" />
+    <Compile Include="lib\websocket-sharp\Net\AuthenticationChallenge.cs" />
+    <Compile Include="lib\websocket-sharp\Net\AuthenticationResponse.cs" />
+    <Compile Include="lib\websocket-sharp\Net\AuthenticationSchemes.cs" />
+    <Compile Include="lib\websocket-sharp\Net\Chunk.cs" />
+    <Compile Include="lib\websocket-sharp\Net\ChunkedRequestStream.cs" />
+    <Compile Include="lib\websocket-sharp\Net\ChunkStream.cs" />
+    <Compile Include="lib\websocket-sharp\Net\ClientSslConfiguration.cs" />
+    <Compile Include="lib\websocket-sharp\Net\Cookie.cs" />
+    <Compile Include="lib\websocket-sharp\Net\CookieCollection.cs" />
+    <Compile Include="lib\websocket-sharp\Net\CookieException.cs" />
+    <Compile Include="lib\websocket-sharp\Net\EndPointListener.cs" />
+    <Compile Include="lib\websocket-sharp\Net\EndPointManager.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpBasicIdentity.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpConnection.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpDigestIdentity.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpHeaderInfo.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpHeaderType.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpListener.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpListenerAsyncResult.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpListenerContext.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpListenerException.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpListenerPrefix.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpListenerPrefixCollection.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpListenerRequest.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpListenerResponse.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpRequestHeader.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpResponseHeader.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpStatusCode.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpStreamAsyncResult.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpUtility.cs" />
+    <Compile Include="lib\websocket-sharp\Net\HttpVersion.cs" />
+    <Compile Include="lib\websocket-sharp\Net\InputChunkState.cs" />
+    <Compile Include="lib\websocket-sharp\Net\InputState.cs" />
+    <Compile Include="lib\websocket-sharp\Net\LineState.cs" />
+    <Compile Include="lib\websocket-sharp\Net\NetworkCredential.cs" />
+    <Compile Include="lib\websocket-sharp\Net\QueryStringCollection.cs" />
+    <Compile Include="lib\websocket-sharp\Net\ReadBufferState.cs" />
+    <Compile Include="lib\websocket-sharp\Net\RequestStream.cs" />
+    <Compile Include="lib\websocket-sharp\Net\ResponseStream.cs" />
+    <Compile Include="lib\websocket-sharp\Net\ServerSslConfiguration.cs" />
+    <Compile Include="lib\websocket-sharp\Net\SslConfiguration.cs" />
+    <Compile Include="lib\websocket-sharp\Net\WebHeaderCollection.cs" />
+    <Compile Include="lib\websocket-sharp\Net\WebSockets\HttpListenerWebSocketContext.cs" />
+    <Compile Include="lib\websocket-sharp\Net\WebSockets\TcpListenerWebSocketContext.cs" />
+    <Compile Include="lib\websocket-sharp\Net\WebSockets\WebSocketContext.cs" />
+    <Compile Include="lib\websocket-sharp\Opcode.cs" />
+    <Compile Include="lib\websocket-sharp\PayloadData.cs" />
+    <Compile Include="lib\websocket-sharp\Rsv.cs" />
+    <Compile Include="lib\websocket-sharp\Server\HttpRequestEventArgs.cs" />
+    <Compile Include="lib\websocket-sharp\Server\HttpServer.cs" />
+    <Compile Include="lib\websocket-sharp\Server\IWebSocketSession.cs" />
+    <Compile Include="lib\websocket-sharp\Server\ServerState.cs" />
+    <Compile Include="lib\websocket-sharp\Server\WebSocketBehavior.cs" />
+    <Compile Include="lib\websocket-sharp\Server\WebSocketServer.cs" />
+    <Compile Include="lib\websocket-sharp\Server\WebSocketServiceHost.cs" />
+    <Compile Include="lib\websocket-sharp\Server\WebSocketServiceManager.cs" />
+    <Compile Include="lib\websocket-sharp\Server\WebSocketSessionManager.cs" />
+    <Compile Include="lib\websocket-sharp\WebSocket.cs" />
+    <Compile Include="lib\websocket-sharp\WebSocketException.cs" />
+    <Compile Include="lib\websocket-sharp\WebSocketFrame.cs" />
+    <Compile Include="lib\websocket-sharp\WebSocketState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\websocket-sharp\LICENSE.txt" />
+    <Content Include="www\css\main.css" />
+    <Content Include="www\favicon.ico" />
+    <Content Include="www\img\cave.png" />
+    <Content Include="www\img\dish.png" />
+    <Content Include="www\img\lighthouse.png" />
+    <Content Include="www\img\radiation.png" />
+    <Content Include="www\img\radtown.png" />
+    <Content Include="www\img\sits_small.png" />
+    <Content Include="www\img\wolf.png" />
+    <Content Include="www\index.html" />
+    <Content Include="www\js\jquery.min.js" />
+    <Content Include="www\js\main.js" />
+    <None Include="README.md" />
+    <None Include="www\config.json" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

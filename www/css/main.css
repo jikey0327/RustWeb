@@ -1,0 +1,86 @@
+﻿body {
+    margin: 0px; padding: 0;
+    background: #0e2934;
+    color: #fff;
+}
+body, td, th {
+    font-family: sans-serif;
+}
+h1 {
+    margin: 0;
+    padding: 2px 0 0 0;
+    font-size: 1em;
+    font-weight: bold;
+    color: #e1e1e1;
+}
+a {
+    color: #99d0ff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+label {
+    cursor: pointer;
+}
+table.info {
+    margin: auto;
+    padding: 8px;
+    background: #000;
+    box-shadow: rgba(0,0,0,0.5) 0 0 10px;
+}
+table.info th {
+    text-align: left;
+    font-weight: bold;
+}
+table.info th, table.info td {
+    padding: 5px 15px 5px 0;
+    text-align: left;
+    vertical-align: top;
+}
+
+#header {
+    padding: 20px 20px 20px 55px;
+    color: #a5a3a4;
+    border-bottom: 1px solid #1b4657;
+    background: #1a1819 url(../img/icon.png) 20px center no-repeat;
+}
+#header .info {
+    float: right;
+}
+#container {
+    padding: 0 20px 10px 20px;
+    text-align: center;
+}
+#header #signin {
+    vertical-align: -35%;
+}
+#footer {
+    font-size: 0.8em;
+    padding: 10px;
+    text-align: center;
+    background: rgba(0,0,0,0.2);
+    color: #999;
+}
+#level {
+    border-bottom: 1px dotted #999;
+    cursor: help;
+}
+#map {
+    position: relative;
+    margin: 0 auto;
+    width: 1000px;
+    height: 1000px;
+    text-align: left;
+    border-width: 0;
+    border-radius: 10px;
+}
+#map #buildings, #map #monuments {
+    position: absolute;
+    width: 1000px;
+    height: 1000px;
+}
+#map img.monument {
+    position: absolute;
+    cursor: help;
+}
