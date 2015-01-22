@@ -62,19 +62,20 @@ namespace Oxide.Rust.Plugins
 
         [HookMethod("OnTick")]
         private void OnTick() {
-            if (!serverInitialized)
-                return;
-            rustWeb.Tick();
+            if (rustWeb != null)
+                rustWeb.Tick();
         }
 
         [HookMethod("OnPlayerChat")]
         private void OnPlayerChat(chat.Arg arg) {
-            rustWeb.OnChat(arg);
+            if (rustWeb != null)
+                rustWeb.OnChat(arg);
         }
 
         [HookMethod("OnEntityDeath")]
         private void OnEntityDeath(UnityEngine.MonoBehaviour entity, HitInfo hitinfo) {
-            rustWeb.OnDeath(entity, hitinfo);
+            if (rustWeb != null)
+                rustWeb.OnDeath(entity, hitinfo);
         }
 
         [HookMethod("BuildServerTags")]

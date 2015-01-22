@@ -1,6 +1,8 @@
-The Web Plugin for Rust
-=======================
-**RustWeb** extends any Rust experimental server with a lightweight webserver running on your server's ip and port, which provides a lot of useful information about your server. Additionally, it comes with the utility required to generate a top-down 2D map image of your server.
+<p align="center">
+	<img src="https://raw.github.com/dcodeIO/RustWeb/master/rustweb.png" alt="RustWeb" />
+</p>
+
+**RustWeb** extends any Rust experimental server with a lightweight webserver running on your server's ip and port, which provides a lot of useful information about your server and allows players to locate themselves on the map. Additionally, it comes with the utility required to generate a top-down 2D image of your server's map.
 
 Usage with your favorite modding framework
 ------------------------------------------
@@ -17,10 +19,11 @@ The webserver serves a set of JSON-formatted data files:
 * **/status.json**  
   contains general information about your server, like its hostname and the maximum number of players. Includes a list of players if `statusIncludesPlayers=true`.
 
-* **/monuments.json** (requires authentication of `displayMonuments=false`)
+* **/monuments.json** (requires authentication if `displayMonuments=false`)  
   contains your server's monuments data.
 
-* **/buildings.json** (requires authentication if `displayBuildings=false`)
+* **/buildings.json** (requires authentication if `displayBuildings=false`)  
+  contains a list of all buildings on the map.
 
 * **/players.json** (requires authentication)  
   contains a list of all players currently connected including their locations.
@@ -32,7 +35,7 @@ The webserver serves a set of JSON-formatted data files:
   contains a list of all animals including their locations.
 
 * **/resources.json** (requires authentication)  
-  contains a list of all resources including their locations.
+   contains a list of all resources including their locations.
 
 To authenticate for restricted data files, use username "admin" and your RCON password.
 
@@ -54,6 +57,8 @@ The plugin also provides a set of RCON commands for map generation:
 Custom web content
 ------------------
 The webserver serves files straight from its "www" directory which developers may use to add custom content to their server.
+
+![Screenshot](https://raw.github.com/dcodeIO/RustWeb/master/screenshot.jpg)
 
 License
 -------

@@ -68,12 +68,13 @@ table.info th, table.info td {
 }
 #map {
     position: relative;
-    margin: 0 auto;
+    margin: 10px auto 0 auto;
     width: 1000px;
     height: 1000px;
     text-align: left;
     border-width: 0;
     border-radius: 10px;
+    background-repeat: no-repeat;
 }
 #map #buildings, #map #monuments {
     position: absolute;

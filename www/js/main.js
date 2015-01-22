@@ -1,7 +1,6 @@
 ﻿var config = {};
 var server = {};
 var iconSize = 20;
-var globalOffset = 0;
 
 function updateStatus(cb) {
     console.log("updating status");
@@ -104,8 +103,8 @@ function worldToMap(position) {
     var x = ((position.x + server.worldsize / 2) / server.worldsize * 1000) | 0,
         y = 1000 - ((position.z + server.worldsize / 2) / server.worldsize * 1000) | 0;
     return {
-        "x": globalOffset + x,
-        "y": globalOffset + y
+        "x": x,
+        "y": y
     };
 }
 
@@ -176,9 +175,6 @@ $(document).ready(function () {
             $(".buildingsOpt").show();
 
         updateStatus(function () {
-
-            // Actual world positions differ slightly, so let's make a guess...
-            globalOffset = server.worldsize / 1000 * 2.5;
 
             // Refresh status every minute
             setInterval(updateStatus, 60000);

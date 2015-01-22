@@ -2,7 +2,7 @@
 	<img src="https://raw.github.com/dcodeIO/RustWeb/master/rustweb.png" alt="RustWeb" />
 </p>
 
-**RustWeb** extends any Rust experimental server with a lightweight webserver running on your server's ip and port, which provides a lot of useful information about your server and allows players to locate themselves on the map. Additionally, it comes with the utility required to generate a top-down 2D map image of your server.
+**RustWeb** extends any Rust experimental server with a lightweight webserver running on your server's ip and port, which provides a lot of useful information about your server and allows players to locate themselves on the map. Additionally, it comes with the utility required to generate a top-down 2D image of your server's map.
 
 Usage with your favorite modding framework
 ------------------------------------------
