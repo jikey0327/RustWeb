@@ -18,24 +18,24 @@ Web API
 -------
 The webserver serves a set of JSON-formatted data files:
 
-* **/status.json**
+* **/status.json**  
 contains general information about your server, like its hostname and the maximum number of players. Includes a list of players if `statusIncludesPlayers=true`.
 
-* **/monuments.json** (requires authentication of `displayMonuments=false`)
+* **/monuments.json** (requires authentication if `displayMonuments=false`)  
 contains your server's monuments data.
 
-* **/buildings.json** (requires authentication if `displayBuildings=false`)
+* **/buildings.json** (requires authentication if `displayBuildings=false`)  
 
-* **/players.json** (requires authentication)
+* **/players.json** (requires authentication)  
 contains a list of all players currently connected including their locations.
 
-* **/sleepers.json** (requires authentication)
+* **/sleepers.json** (requires authentication)  
 contains a list of all sleepers including their locations.
 
-* **/animals.json** (requires authentication)
+* **/animals.json** (requires authentication)  
 contains a list of all animals including their locations.
 
-* **/resources.json** (requires authentication)
+* **/resources.json** (requires authentication)  
 contains a list of all resources including their locations.
 
 To authenticate for restricted data files, use username "admin" and your RCON password.
