@@ -52,7 +52,7 @@ table.info th, table.info td {
     padding: 0 20px 10px 20px;
     text-align: center;
 }
-#header #signin {
+#header img {
     vertical-align: -35%;
 }
 #footer {
@@ -84,4 +84,15 @@ table.info th, table.info td {
 #map img.monument {
     position: absolute;
     cursor: help;
+}
+.friendsOpt {
+    display: none;
+}
+.notifyjs-rust-base {
+    background-color: #1a1819;
+    color: #ddd;
+    padding: 5px;
+}
+.notifyjs-rust-base strong {
+    color: #ffdd00;
 }

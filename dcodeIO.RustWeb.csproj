@@ -126,6 +126,7 @@
     <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="lib\icsharpcode-SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="src\FriendUtil.cs" />
     <Compile Include="src\OpenID.cs" />
     <Compile Include="src\RconUtil.cs" />
     <Compile Include="src\Session.cs" />
@@ -224,8 +225,10 @@
     <Content Include="www\img\sits_small.png" />
     <Content Include="www\img\wolf.png" />
     <Content Include="www\index.html" />
+    <Content Include="www\js\helpers.js" />
     <Content Include="www\js\jquery.min.js" />
     <Content Include="www\js\main.js" />
+    <Content Include="www\js\notify.min.js" />
     <None Include="README.md" />
     <None Include="www\config.json" />
   </ItemGroup>

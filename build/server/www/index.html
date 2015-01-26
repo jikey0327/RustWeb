@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="css/main.css" />
 <link rel="shortcut icon" href="favicon.ico" />
 <script src="js/jquery.min.js"></script>
+<script src="js/notify.min.js"></script>
+<script src="js/helpers.js"></script>
 </head>
 <body>
 <div id="header">
@@ -14,7 +16,8 @@
         <span id="level">Procedural Map</span> &nbsp; &nbsp;
         <span id="numplayers">0</span> / <span id="maxplayers">0</span> players  &nbsp; &nbsp;
         <span id="sleepers">0</span> sleepers<span class="signinOpt"> &nbsp; &nbsp;
-        <a id="signin" href="/signin"><img src="img/sits_small.png" alt="Sign in through STEAM" /></a></span>
+        <a id="signin" href="/signin"><img src="img/sits_small.png" alt="Sign in through STEAM" /></a></span><span class="friendsOpt"> &nbsp; &nbsp;
+        <a id="managefriends" href="javascript:void(toggleFriends())"><img src="img/managefriends.png" alt="Manage friends" /></a></span>
     </div>
     <h1><span id="hostname">Rust Server</span></h1>
 </div>

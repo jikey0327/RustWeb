@@ -14,7 +14,7 @@ Currently available glue with setup instructions:
 
 Web API
 -------
-The webserver serves a set of JSON-formatted data files:
+The webserver serves a set of JSON-formatted data files on your server's ip address and port, e.g. "http://SERVERIP:SERVERPORT/".
 
 * **/status.json**  
   contains general information about your server, like its hostname and the maximum number of players. Includes a list of players if `statusIncludesPlayers=true`.

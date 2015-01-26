@@ -17,6 +17,7 @@ namespace Oxide.Rust.Plugins
         private RustWeb rustWeb = null;
         private string dataDir;
         internal static string RootDir;
+        internal static string DataDir;
         private bool serverInitialized = false;
 
         public RustWebPlugin() {
@@ -38,6 +39,7 @@ namespace Oxide.Rust.Plugins
             FieldInfo fld = typeof(OxideMod).GetField("datadir", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField);
             dataDir = (string)fld.GetValue(Interface.GetMod());
             RootDir = Path.GetFullPath(Path.Combine(dataDir, ".."+Path.DirectorySeparatorChar+"www"));
+            DataDir = Path.GetFullPath(Path.Combine(dataDir, "rustweb"));
 
             Command cmdlib = Interface.GetMod().GetLibrary<Command>("Command");
             cmdlib.AddConsoleCommand("map.export", this, "cmdExport");
@@ -46,18 +48,28 @@ namespace Oxide.Rust.Plugins
             cmdlib.AddConsoleCommand("web.reloadconfig", this, "cmdReloadConfig");
         }
 
+        [HookMethod("OnUnload")]
+        private void OnUnload() {
+            logger.Write(LogType.Warning, "Reloading RustWeb has no effect. To update it, a server restart is inevitable.");
+        }
+
         [HookMethod("OnServerInitialized")]
         private void OnServerInitialized() {
             if (serverInitialized)
                 return;
             serverInitialized = true;
 
-            logger.Write(LogType.Info, "Starting RustWeb "+RustWeb.Version.ToString(3)+", serving from '" + RootDir + "' ...");
-            rustWeb = new RustWeb(RootDir);
-            rustWeb.OnError += (sender, e) => {
-                logger.WriteException("RustWeb error", e.Exception);
-            };
-            rustWeb.Start();
+            if (RustWeb.Instance == null) {
+                logger.Write(LogType.Info, "Starting RustWeb " + RustWeb.Version.ToString(3) + ", serving from '" + RootDir + "' ...");
+                rustWeb = new RustWeb(RootDir, DataDir);
+                rustWeb.OnError += (sender, e) => {
+                    logger.WriteException("RustWeb error: " + e.Message, e.Exception);
+                };
+                rustWeb.Start();
+            } else {
+                logger.Write(LogType.Warning, "Reloading RustWeb has no effect. To update it, a server restart is inevitable.");
+                rustWeb = RustWeb.Instance;
+            }
         }
 
         [HookMethod("OnTick")]
@@ -66,16 +78,34 @@ namespace Oxide.Rust.Plugins
                 rustWeb.Tick();
         }
 
+        [HookMethod("OnPlayerConnected")]
+        private void OnPlayerConnected(Network.Message packet) {
+            if (rustWeb != null)
+                rustWeb.OnPlayerConnected(packet);
+        }
+
+        [HookMethod("OnPlayerSpawn")]
+        private void OnPlayerSpawn(BasePlayer player) {
+            if (rustWeb != null)
+                rustWeb.OnPlayerSpawn(player);
+        }
+
+        [HookMethod("OnPlayerDisconnected")]
+        private void OnPlayerDisconnected(BasePlayer player) {
+            if (rustWeb != null)
+                rustWeb.OnPlayerDisconnected(player);
+        }
+
         [HookMethod("OnPlayerChat")]
         private void OnPlayerChat(chat.Arg arg) {
             if (rustWeb != null)
-                rustWeb.OnChat(arg);
+                rustWeb.OnPlayerChat(arg);
         }
 
         [HookMethod("OnEntityDeath")]
         private void OnEntityDeath(UnityEngine.MonoBehaviour entity, HitInfo hitinfo) {
             if (rustWeb != null)
-                rustWeb.OnDeath(entity, hitinfo);
+                rustWeb.OnEntityDeath(entity, hitinfo);
         }
 
         [HookMethod("BuildServerTags")]
