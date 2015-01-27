@@ -35,7 +35,7 @@ The webserver serves a set of JSON-formatted data files on your server's ip addr
   contains a list of all animals including their locations.
 
 * **/resources.json** (requires authentication)  
-   contains a list of all resources including their locations.
+  contains a list of all resources including their locations.
 
 To authenticate for restricted data files, use username "admin" and your RCON password.
 
@@ -53,7 +53,7 @@ To change configuration parameters, edit the file "config.json" inside of the "w
   specifies whether to include player names in */status.json*. This is for example required for admins to see player names on mouse hover.
 
 * **welcomeMessage**  
-  specified the welcome message displayed in game. Allows placeholders for `{IP}`, `{PORT}` and `{NAME]`. May be set to `null` to disable.
+  specifies the welcome message displayed in game. Allows placeholders for `{IP}`, `{PORT}` and `{NAME]`. May be set to `null` to disable.
 
 * **broadcastDeaths**  
   specified whether to broadcast death events also in game.
