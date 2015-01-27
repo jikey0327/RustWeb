@@ -53,7 +53,7 @@ To change configuration parameters, edit the file "config.json" inside of the "w
   specifies whether to include player names in */status.json*. This is for example required for admins to see player names on mouse hover.
 
 * **welcomeMessage**  
-  specified the welcome message sent to players on connect. May be set to `null` to disable.
+  specified the welcome message displayed in game. Allows placeholders for `{IP}`, `{PORT}` and `{NAME]`. May be set to `null` to disable.
 
 * **broadcastDeaths**  
   specified whether to broadcast death events also in game.
