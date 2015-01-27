@@ -129,7 +129,6 @@
     <Compile Include="src\FriendUtil.cs" />
     <Compile Include="src\OpenID.cs" />
     <Compile Include="src\RconUtil.cs" />
-    <Compile Include="src\Session.cs" />
     <Compile Include="src\WebSocket.cs" />
     <Compile Include="src\LogMessage.cs" />
     <Compile Include="src\MapUtil.cs" />
@@ -220,8 +219,11 @@
     <Content Include="www\img\cave.png" />
     <Content Include="www\img\dish.png" />
     <Content Include="www\img\lighthouse.png" />
-    <Content Include="www\img\radiation.png" />
+    <Content Include="www\img\minmax.png" />
     <Content Include="www\img\radtown.png" />
+    <Content Include="www\img\share-both.png" />
+    <Content Include="www\img\share-they.png" />
+    <Content Include="www\img\share-you.png" />
     <Content Include="www\img\sits_small.png" />
     <Content Include="www\img\wolf.png" />
     <Content Include="www\index.html" />

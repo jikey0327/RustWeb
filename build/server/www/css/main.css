@@ -1,4 +1,5 @@
-﻿body {
+﻿/* General */
+body {
     margin: 0px; padding: 0;
     background: #0e2934;
     color: #fff;
@@ -23,34 +24,28 @@ a:hover {
 label {
     cursor: pointer;
 }
-table.info {
-    margin: auto;
-    padding: 8px;
-    background: #000;
-    box-shadow: rgba(0,0,0,0.5) 0 0 10px;
-}
-table.info th {
-    text-align: left;
-    font-weight: bold;
-}
-table.info th, table.info td {
-    padding: 5px 15px 5px 0;
-    text-align: left;
-    vertical-align: top;
-}
 
+/* Header and footer */
 #header {
     padding: 20px 20px 20px 55px;
     color: #a5a3a4;
     border-bottom: 1px solid #1b4657;
     background: #1a1819 url(../img/icon.png) 20px center no-repeat;
 }
-#header .info {
+#header ul.info {
+    padding: 0;
+    margin: 0;
+    display: block;
     float: right;
 }
-#container {
-    padding: 0 20px 10px 20px;
-    text-align: center;
+#header ul.info li {
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    padding-left: 20px;
+}
+#header ul.info li.first {
+    padding-left: 0;
 }
 #header img {
     vertical-align: -35%;
@@ -61,6 +56,12 @@ table.info th, table.info td {
     text-align: center;
     background: rgba(0,0,0,0.2);
     color: #999;
+}
+
+/* Content */
+#container {
+    padding: 0 20px 10px 20px;
+    text-align: center;
 }
 #level {
     border-bottom: 1px dotted #999;
@@ -85,13 +86,48 @@ table.info th, table.info td {
     position: absolute;
     cursor: help;
 }
-.friendsOpt {
-    display: none;
+#friends {
+    position: fixed;
+    bottom: 0px;
+    right: 15px;
+    background: #1a1819;
+    width: 250px;
+    max-height: 800px;
+    padding: 10px;
+    border: 1px solid #1b4657;
+    border-bottom: 0;
 }
+#friends .icon {
+    width: 20px;
+    vertical-align: -16%;
+}
+#friends h2 {
+    font-weight: normal;
+    color: #736e70;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+}
+#friends ul {
+    margin: 10px 0;
+    padding: 0;
+    min-height: 20px;
+    background: #232122;
+}
+#friends .legend {
+    margin-top: 5px;
+    font-size: 0.8em;
+}
+#friends .legend td {
+    text-align: center;
+}
+
+/* Notifications */
 .notifyjs-rust-base {
     background-color: #1a1819;
     color: #ddd;
-    padding: 5px;
+    padding: 5px 8px;
+    box-shadow: rgba(0,0,0,0.4) 0 0 5px;
 }
 .notifyjs-rust-base strong {
     color: #ffdd00;

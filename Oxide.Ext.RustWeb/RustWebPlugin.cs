@@ -15,16 +15,16 @@ namespace Oxide.Rust.Plugins
         private static Logger logger = Interface.GetMod().RootLogger;
 
         private RustWeb rustWeb = null;
-        private string dataDir;
+        private string oxideDataDir;
         internal static string RootDir;
         internal static string DataDir;
         private bool serverInitialized = false;
 
         public RustWebPlugin() {
             Name = "rustweb";
-            Title = "Rust Web";
+            Title = "RustWeb Core";
             Author = "dcode";
-            Version = RustWebExtension.ExtensionVersion;
+            Version = new VersionNumber(1, 1, 0);
             HasConfig = false;
         }
 
@@ -36,15 +36,14 @@ namespace Oxide.Rust.Plugins
         private void Init() {
             logger.Write(LogType.Info, "Initializing");
 
-            FieldInfo fld = typeof(OxideMod).GetField("datadir", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField);
-            dataDir = (string)fld.GetValue(Interface.GetMod());
-            RootDir = Path.GetFullPath(Path.Combine(dataDir, ".."+Path.DirectorySeparatorChar+"www"));
-            DataDir = Path.GetFullPath(Path.Combine(dataDir, "rustweb"));
+            oxideDataDir = Interface.GetMod().DataDirectory;
+            RootDir = Path.GetFullPath(Path.Combine(oxideDataDir, Path.Combine("..", "www")));
+            DataDir = Path.GetFullPath(Path.Combine(oxideDataDir, "rustweb"));
 
             Command cmdlib = Interface.GetMod().GetLibrary<Command>("Command");
-            cmdlib.AddConsoleCommand("map.export", this, "cmdExport");
-            cmdlib.AddConsoleCommand("map.monuments", this, "cmdMonuments");
-            cmdlib.AddConsoleCommand("map.dumpobjects", this, "cmdDumpObjects");
+            cmdlib.AddConsoleCommand("map.export"      , this, "cmdExport");
+            cmdlib.AddConsoleCommand("map.monuments"   , this, "cmdMonuments");
+            cmdlib.AddConsoleCommand("map.dumpobjects" , this, "cmdDumpObjects");
             cmdlib.AddConsoleCommand("web.reloadconfig", this, "cmdReloadConfig");
         }
 
@@ -118,7 +117,7 @@ namespace Oxide.Rust.Plugins
             if (arg.connection != null)
                 return; // Allow this only from (real) console as the server will most likely hang
 
-            RconUtil.MapExport(arg, dataDir);
+            RconUtil.MapExport(arg, oxideDataDir);
         }
 
         [HookMethod("cmdMonuments")]

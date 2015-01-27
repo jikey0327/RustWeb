@@ -1,13 +1,14 @@
-﻿var config = {};
-var server = {};
-var iconSize = 20;
-var sessionId = undefined;
-var userId = undefined;
-var locationUpdateRate = 5;
-var players = {};
+﻿var config = {};                // config.json contents
+var server = {};                // status.json contents
+var iconSize = 20;              // landmark icon size
+var session = undefined;        // session data
+var locationUpdateRate = 5;     // location interpolations per second
+var players = {};               // known players by user id
+var locations = {};             // player locations by user id
 
+// Update status content
 function updateStatus(cb) {
-    console.log("updating status");
+    console.log("updating status ...");
     $.getJSON("/status.json", function (data) {
         server = data;
         $.each(data, function (k, v) {
@@ -21,19 +22,21 @@ function updateStatus(cb) {
             players = {};
             $.each(data.players, function (i, p) {
                 players[p.id] = p;
-                if (p.id != userId)
+                if (!session || p.id != session.id)
                     $('#player-' + p.id).prop("title", p.name);
             });
         }
+        console.log("status updated");
         if (cb) cb();
     }).fail(function (xhr, err) {
         console.log("status update failed: "+err.message);
     });
 }
 
+// Update monuments content
 function updateMonuments(cb) {
-    console.log("updating monuments");
-    var root = $('#monuments');
+    console.log("updating monuments ...");
+    var root = $('#landmarks');
     $.getJSON("/monuments.json", function (data) {
         $.each(data, function (i, obj) {
             var img,
@@ -50,9 +53,6 @@ function updateMonuments(cb) {
             } else if (/cave/.test(obj.name)) {
                 img = "/img/cave.png";
                 title = "Cave";
-            } else if (/radiation/.test(obj.name)) {
-                img = "/img/radiation.png";
-                title = "Radiation Zone";
             } else if (/radtown/.test(obj.name)) {
                 img = "/img/radtown.png";
                 title = "Radtown";
@@ -68,14 +68,16 @@ function updateMonuments(cb) {
                 root.append(elem);
             }
         });
+        console.log("monuments updated");
         if (cb) cb();
     }).fail(function (xhr, err) {
         console.log("monuments update failed: " + err.message);
     });
 }
 
+// Update buildings overlay
 function updateBuildings(cb) {
-    console.log("updating buildings");
+    console.log("updating buildings ...");
     $.getJSON("/buildings.json", function (data) {
         var canvas = document.getElementById("buildings"),
         ctx = canvas.getContext("2d");
@@ -105,29 +107,19 @@ function updateBuildings(cb) {
             ctx.fillRect(-size / 2, -size / 2, size, size);
             ctx.restore();
         });
+        console.log("buildings updated");
         if (cb) cb();
     }).fail(function (xhr, err) {
         console.log("buildings update failed: " + err.message);
     });;
 }
 
-function worldToMap(position) {
-    var x = ((position.x + server.worldsize / 2) / server.worldsize * 1000) | 0,
-        y = 1000 - ((position.z + server.worldsize / 2) / server.worldsize * 1000) | 0;
-    return {
-        "x": x,
-        "y": y
-    };
-}
-
-var locations = {};
-var lastUpdate = Date.now();
-
+// Update a single player's location data
 function updatePlayerLocation(data) {
     var loc, pos = worldToMap(data), rot = data.r;
     if (!locations.hasOwnProperty(data.id)) {
         console.log("creating player " + data.id);
-        $('#monuments').append(elem = $('<img class="monument" alt="" id="player-'+data.id+'" />'));
+        $('#landmarks').append(elem = $('<img class="monument" alt="" id="player-'+data.id+'" />'));
         elem.prop("src", '/img/' + (userId === data.id ? "self" : "player") + '.png');
         elem.prop("title", userId === data.id ? "This is you!" : players[data.id] ? players[data.id]['name'] : data.id);
         elem.css({
@@ -145,18 +137,14 @@ function updatePlayerLocation(data) {
         loc.pos = [loc.pos[1], pos];
         loc.rot = [loc.rot[1], rot];
     }
+    loc.time = Date.now();
 }
 
-function lerp(a, b, t) {
-    return {
-        "x": a.x * (1 - t) + b.x * t,
-        "y": a.y * (1 - t) + b.y * t
-    };
-}
-
+// Interpolate player locations `locationUpdateRate` times a second
 setInterval(function () {
+    var now = Date.now();
     $.each(locations, function (id, loc) {
-        var t = (Date.now() - lastUpdate) / 1000;
+        var t = (now - loc.time) / 1000;
         if (t > 1) t = 1;
         var pos = lerp(loc.pos[0], loc.pos[1], t);
         loc.elem.css({
@@ -167,15 +155,16 @@ setInterval(function () {
     });
 }, 1000/locationUpdateRate);
 
+// Connect to the websocket endpoint and handle messages
 function connect() {
     if (typeof WebSocket == "undefined") {
         console.log("Sorry, your browser does not support WebSockets. Maybe consider an upgrade.");
         return;
     }
-    console.log("connecting...");
+    console.log("connecting to websocket ...");
     var socket = new WebSocket("ws://" + document.location.hostname + ":" + document.location.port + "/ws");
     socket.onopen = function () {
-        console.log("connected");
+        console.log("connected to websocket");
     }
     socket.onmessage = function (e) {
         var msg = e.data,
@@ -190,113 +179,96 @@ function connect() {
             data = JSON.parse(msg.substring(p + 1));
         }
         switch (cmd) {
-            case "ses":
-                sessionId = data.id;
-                userId = data.userId;
-                $('.signinOpt').hide();
-                $.notify("<strong>Welcome to RustWeb, "+escapeHtml(data.name)+"!</strong>", { position: "bottom left", autoHideDelay: 10000 });
+            case "hello":
+                console.log("greeted by server");
+                socket.send("hello");
                 break;
-            case "upd":
-                lastUpdate = Date.now();
+            case "session":
+                console.log("received session info: "+data._id);
+                session = data;
+                userId = data.id;
+                toggleCss("signedin", true);
+                notify("<strong>You</strong> just signed in");
                 break;
-            case "loc":
+            case "friend.add":
+                console.log("received added friend: " + data.id);
+                session.friends.push(data.id);
+                break;
+            case "friend.del":
+                console.log("received deleted friend: " + data.id);
+                var p = session.friends.indexOf(data.id);
+                if (p >= 0)
+                    session.friends.splice(p, 1);
+                break;
+            case "share.add":
+                console.log("received added share: " + data.id);
+                session.shares.push(data.id);
+                break;
+            case "share.del":
+                console.log("received deleted share: " + data.id);
+                var p = session.shares.indexOf(data.id);
+                if (p >= 0)
+                    session.shares.splice(p, 1);
+                break;
+            case "l"/*ocation*/:
                 updatePlayerLocation(data);
                 break;
-            case "con":
-                $.notify("<strong>"+escapeHtml(data.name) + "</strong> woke up");
+            case "player.connect":
+                console.log("received player connect: " + data.id);
+                notify("<strong>"+escapeHtml(data.name) + "</strong> woke up");
                 break;
-            case "dis":
+            case "player.disconnect":
+                console.log("received player disconnect: " + data.id);
                 $('#player-' + data.id).remove();
-                $.notify("<strong>" + escapeHtml(data.name) + "</strong> felt asleep", { position: "bottom left", autoHideDelay: 10000 });
+                notify("<strong>" + escapeHtml(data.name) + "</strong> felt asleep");
                 break;
-            case "cha":
-                $.notify("<strong>" + escapeHtml(data.name) + "</strong> : <span style=\"color:#fff\">" + escapeHtml(data.message)+"</span>", { position: "bottom left", autoHideDelay: 10000 });
+            case "player.chat":
+                console.log("received player spawn: " + data.id);
+                notify("<strong>" + escapeHtml(data.name) + "</strong> : <span style=\"color:#fff\">" + escapeHtml(data.message)+"</span>");
                 break;
-            case "spa":
-                $.notify("<strong>" + escapeHtml(data.name) + "</strong> spawned in the middle of nowhere", { position: "bottom left", autoHideDelay: 10000 });
+            case "player.spawn":
+                console.log("received player spawn: " + data.id);
+                notify("<strong>" + escapeHtml(data.name) + "</strong> spawned in the middle of nowhere");
                 break;
-            case "dea":
-                var reason;
-                switch (data.lastDamage) {
-                    case "Hunger":
-                        reason = "died of malnutrition";
-                        break;
-                    case "Thirst":
-                        reason = "died of dehydration";
-                        break;
-                    case "Cold":
-                        reason = "died of hypothermia";
-                        break;
-                    case "Drowned":
-                        reason = "died of asphyxiation";
-                        break;
-                    case "Heat":
-                        reason = "died of hyperthermia";
-                        break;
-                    case "Bleeding":
-                        reason = "died of hemorrhage";
-                        break;
-                    case "Poison":
-                        reason = "died of intoxication";
-                        break;
-                    case "Suicide":
-                        reason = "committed suicide";
-                        break;
-                    case "Generic":
-                        reason = "died of generalization";
-                        break;
-                    case "Bullet":
-                        reason = "died of perforation";
-                        break;
-                    case "Slash":
-                        reason = "died of dissection";
-                        break;
-                    case "BluntTrauma":
-                        reason = "died of contusion";
-                        break;
-                    case "Fall":
-                        reason = "died of precipitation";
-                        break;
-                    case "Radiation":
-                        reason = "died of radiation";
-                        break;
-                    case "Bite":
-                        reason = "died of amputation";
-                        break;
-                    default:
-                        reason = "died of something";
-                }
-                $.notify("<strong>"+escapeHtml(data.name)+"</strong> "+reason, { position: "bottom left", autoHideDelay: 10000 });
+            case "player.death":
+                console.log("received player death: " + data.id);
+                notify("<strong>" + escapeHtml(data.name) + "</strong> " + damageToReason(data.lastDamage));
+                break;
+            default:
+                console.log("received unknown command: " + cmd);
                 break;
         }
     }
     socket.onclose = function (e) {
-        $('.signinOpt').show();
-        console.log("disconnected (trying to reconnect in 20s)");
+        toggleCss("signedin", false);
+        console.log("disconnected from websocket (trying to reconnect in 20s)");
         setTimeout(function () {
             connect();
         }, 20000);
     }
     socket.onerror = function (e) {
-        console.log("error: "+e.error);
+        console.log("websocket error: "+e.error);
     }
 }
 
 $(document).ready(function () {
+    console.log("initializing ...");
+    toggleCss("signedin", false);
 
-    $('#monuments-checkbox').change(function () {
-        $('#monuments').css("display", $('#monuments-checkbox').is(":checked") ? "block" : "none");
+    // Enable toggling of landmarks and buildings
+    $('#landmarks-checkbox').change(function () {
+        $('#landmarks').css("display", $('#landmarks-checkbox').is(":checked") ? "block" : "none");
     });
     $('#buildings-checkbox').change(function () {
         $('#buildings').css("display", $('#buildings-checkbox').is(":checked") ? "block" : "none");
     });
 
-    console.log("loading config");
+    console.log("loading config ...");
     $.getJSON("/config.json", function (data) {
         config = data;
-        if (config && config.displayBuildings)
-            $(".buildingsOpt").show();
-
+        toggleCss("displayMonuments", !!config.displayMonuments);
+        toggleCss("displayBuildings", !!config.displayBuildings);
+        console.log("config loaded");
         updateStatus(function () {
 
             // Refresh status every minute
@@ -315,11 +287,6 @@ $(document).ready(function () {
             connect();
         });
     }).fail(function (xhr, err) {
-        console.log("Loading config failed:", err);
+        console.log("loading config failed:", err);
     });
 });
-
-if (typeof console === 'undefined')
-    console = {};
-if (!console.log)
-    console.log = function () { }

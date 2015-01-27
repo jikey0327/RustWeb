@@ -1,5 +1,6 @@
 *.suo
 Dependencies/
+Tools/
 bin/
 obj/
 Oxide.Ext.RustWeb/Dependencies/

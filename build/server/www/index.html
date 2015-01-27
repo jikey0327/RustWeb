@@ -12,30 +12,46 @@
 </head>
 <body>
 <div id="header">
-    <div class="info">
-        <span id="level">Procedural Map</span> &nbsp; &nbsp;
-        <span id="numplayers">0</span> / <span id="maxplayers">0</span> players  &nbsp; &nbsp;
-        <span id="sleepers">0</span> sleepers<span class="signinOpt"> &nbsp; &nbsp;
-        <a id="signin" href="/signin"><img src="img/sits_small.png" alt="Sign in through STEAM" /></a></span><span class="friendsOpt"> &nbsp; &nbsp;
-        <a id="managefriends" href="javascript:void(toggleFriends())"><img src="img/managefriends.png" alt="Manage friends" /></a></span>
-    </div>
+    <ul class="info">
+        <li class="first"><span id="level">Procedural Map</span></li>
+        <li><span id="numplayers">0</span> / <span id="maxplayers">0</span> players</li>
+        <li><span id="sleepers">0</span> sleepers</li>
+        <li class="not-signedin"><a id="signin" href="/signin"><img src="img/sits_small.png" alt="Sign in through STEAM" /></a></li>
+    </ul>
     <h1><span id="hostname">Rust Server</span></h1>
 </div>
 <div id="container">
     <div id="map" style="background-image: url(map.jpg)">
         <canvas id="buildings" width="1000" height="1000"></canvas>
-        <div id="monuments"></div>
+        <div id="landmarks"></div>
     </div>
     <p>
         Display: &nbsp;
-        <label for="monuments-checkbox"><input id="monuments-checkbox" type="checkbox" checked="checked" /> Monuments</label> &nbsp;
-        <span class="buildingsOpt" style="display: none"><label for="buildings-checkbox"><input id="buildings-checkbox" type="checkbox" checked="checked" /> Buildings</label></span>
+        <label for="landmarks-checkbox"><input id="landmarks-checkbox" type="checkbox" checked="checked" /> Landmarks</label> &nbsp;
+        <span class="displayBuildings" style="display: none"><label for="buildings-checkbox"><input id="buildings-checkbox" type="checkbox" checked="checked" /> Buildings</label></span>
     </p>
+</div>
+<div id="friends" style="display: none">
+    <div style="float: right">
+        <img src="img/minmax.png" class="icon" />
+    </div>
+    <h2>Friends</h2>
+    <ul id="friendslist">
+    </ul>
+    <h2>Recent players</h2>
+    <ul id="recentlist">
+    </ul>
+    <h2>Who shares?</h2>
+    <table class="legend" width="100%"><tr>
+        <td><img src="img/share-you.png" class="icon" /> You</td>
+        <td><img src="img/share-they.png" class="icon" /> They</td>
+        <td><img src="img/share-both.png" class="icon" /> Mutually</td>
+    </tr></table>
 </div>
 <div id="footer">
     <p><a title="The web plugin and map generator for Rust" href="http://github.com/dcodeIO/RustWeb">RustWeb</a> by <a href="http://dcode.io">dcode</a></p>
     <p class="disc">RustWeb is not affiliated with, nor endorsed by Facepunch Studios LTD. All trademarks belong to their respective owners.</p>
-</div>
+</div> 
 <script src="js/main.js"></script>
 </body>
 </html>
