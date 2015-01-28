@@ -31,22 +31,24 @@
         <span class="displayBuildings" style="display: none"><label for="buildings-checkbox"><input id="buildings-checkbox" type="checkbox" checked="checked" /> Buildings</label></span>
     </p>
 </div>
-<div id="friends" style="display: none">
+<div id="friends" class="signedin">
     <div style="float: right">
-        <img src="img/minmax.png" class="icon" />
+        <a href="#" onclick="$('#friends-toggle').toggle(); return false"><img src="img/minmax.png" class="icon" /></a>
     </div>
-    <h2>Friends</h2>
-    <ul id="friendslist">
-    </ul>
-    <h2>Recent players</h2>
-    <ul id="recentlist">
-    </ul>
-    <h2>Who shares?</h2>
-    <table class="legend" width="100%"><tr>
-        <td><img src="img/share-you.png" class="icon" /> You</td>
-        <td><img src="img/share-they.png" class="icon" /> They</td>
-        <td><img src="img/share-both.png" class="icon" /> Mutually</td>
-    </tr></table>
+    <h2>Allies</h2>
+    <div id="friends-toggle">
+        <ul id="allieslist">
+        </ul>
+        <h2>Recent players</h2>
+        <ul id="recentlist">
+        </ul>
+        <h2>Who shares their location?</h2>
+        <table class="legend" width="100%"><tr>
+            <td><img src="img/share-you.png" class="icon" /> You</td>
+            <td><img src="img/share-they.png" class="icon" /> They</td>
+            <td><img src="img/share-both.png" class="icon" /> Mutually</td>
+        </tr></table>
+    </div>
 </div>
 <div id="footer">
     <p><a title="The web plugin and map generator for Rust" href="http://github.com/dcodeIO/RustWeb">RustWeb</a> by <a href="http://dcode.io">dcode</a></p>

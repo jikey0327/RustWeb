@@ -24,7 +24,8 @@ copy Oxide.Ext.RustWeb\bin\Release\Oxide.Ext.RustWeb.dll build\RustDedicated_Dat
 mkdir build\server\www
 xcopy /S /I /Y www build\server\www
 copy README.md build\README.md
-copy Oxide.Ext.RustWeb\README.md build\README-OXIDE2.md
+copy FAQ.md build\FAQ.md
+copy Oxide.Ext.RustWeb\README.md build\INSTALL-OXIDE2.md
 
 goto:eof
 ::ERRORS

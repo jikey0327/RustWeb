@@ -129,6 +129,7 @@
     <Compile Include="src\FriendUtil.cs" />
     <Compile Include="src\OpenID.cs" />
     <Compile Include="src\RconUtil.cs" />
+    <Compile Include="src\Util.cs" />
     <Compile Include="src\WebSocket.cs" />
     <Compile Include="src\LogMessage.cs" />
     <Compile Include="src\MapUtil.cs" />

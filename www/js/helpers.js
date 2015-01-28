@@ -1,4 +1,9 @@
-﻿// Escape HTML special characters
+﻿// Polyfill console in primitive environments
+if (typeof console === 'undefined')
+    console = {};
+console.log = console.log || function () { };
+
+// Escape HTML special characters
 function escapeHtml(str) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
@@ -16,6 +21,7 @@ function toggleCss(name, satisfied) {
 
 // Lerp between two 2D vectors
 function lerp(a, b, t) {
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
     return {
         "x": a.x * (1 - t) + b.x * t,
         "y": a.y * (1 - t) + b.y * t
@@ -24,11 +30,9 @@ function lerp(a, b, t) {
 
 // Convert from world to map coordinates (requires worldsize to be known)
 function worldToMap(position) {
-    var x = ((position.x + server.worldsize / 2) / server.worldsize * 1000) | 0,
-        y = 1000 - ((position.z + server.worldsize / 2) / server.worldsize * 1000) | 0;
     return {
-        "x": x,
-        "y": y
+        "x": ((position.x + server.worldsize / 2) / server.worldsize * 1000) | 0,
+        "y": (1000 - ((position.z + server.worldsize / 2) / server.worldsize * 1000)) | 0
     };
 }
 
@@ -36,62 +40,40 @@ function worldToMap(position) {
 function damageToReason(dmg) {
     switch (dmg) {
         case "Hunger":
-            reason = "died of malnutrition";
-            break;
+            return "{NAME} died of malnutrition";
         case "Thirst":
-            reason = "died of dehydration";
-            break;
+            return "{NAME} died of dehydration";
         case "Cold":
-            reason = "died of hypothermia";
-            break;
+            return "{NAME} died of hypothermia";
         case "Drowned":
-            reason = "died of asphyxiation";
-            break;
+            return "{NAME} died of asphyxiation";
         case "Heat":
-            reason = "died of hyperthermia";
-            break;
+            return "{NAME} died of hyperthermia";
         case "Bleeding":
-            reason = "died of hemorrhage";
-            break;
+            return "{NAME} died of hemorrhage";
         case "Poison":
-            reason = "died of intoxication";
-            break;
+            return "{NAME} died of intoxication";
         case "Suicide":
-            reason = "committed suicide";
-            break;
+            return "{NAME} committed suicide";
         case "Generic":
-            reason = "died of generalization";
-            break;
+            return "{NAME} died of generalization";
         case "Bullet":
-            reason = "died of perforation";
-            break;
+            return "{NAME} died of perforation";
         case "Slash":
-            reason = "died of dissection";
-            break;
+            return "{NAME} died of dissection";
         case "BluntTrauma":
-            reason = "died of contusion";
-            break;
+            return "{NAME} died of contusion";
         case "Fall":
-            reason = "died of precipitation";
-            break;
+            return "{NAME} died of precipitation";
         case "Radiation":
-            reason = "died of radiation";
-            break;
+            return "{NAME} died of radiation";
         case "Bite":
-            reason = "died of amputation";
-            break;
-        default:
-            reason = "died of something";
+            return "{NAME} died of amputation";
     }
-    return reason;
+    return "{NAME} died of something";
 }
 
-// Polyfill console in primitive environments
-if (typeof console === 'undefined')
-    console = {};
-console.log = console.log || function () { };
-
-// Pops up a notification
+// Pop up a notification
 function notify(html) {
     $.notify(html, { position: "bottom left", autoHideDelay: 10000 });
 }

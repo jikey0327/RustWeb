@@ -1,4 +1,5 @@
 ﻿using dcodeIO.RustWeb;
+using Newtonsoft.Json.Linq;
 using Oxide.Core;
 using Oxide.Core.Logging;
 using Oxide.Core.Plugins;
@@ -13,11 +14,11 @@ namespace Oxide.Rust.Plugins
     public class RustWebPlugin : CSPlugin
     {
         private static Logger logger = Interface.GetMod().RootLogger;
+        internal static string RootDir;
+        internal static string DataDir;
 
         private RustWeb rustWeb = null;
         private string oxideDataDir;
-        internal static string RootDir;
-        internal static string DataDir;
         private bool serverInitialized = false;
 
         public RustWebPlugin() {
@@ -116,7 +117,6 @@ namespace Oxide.Rust.Plugins
         private void cmdExport(ConsoleSystem.Arg arg) {
             if (arg.connection != null)
                 return; // Allow this only from (real) console as the server will most likely hang
-
             RconUtil.MapExport(arg, oxideDataDir);
         }
 
@@ -124,7 +124,6 @@ namespace Oxide.Rust.Plugins
         private void cmdMonuments(ConsoleSystem.Arg arg) {
             if (arg.connection != null)
                 return; // Allow this only from (real) console as the server will most likely hang
-
             RconUtil.MapMonuments(arg);
         }
 

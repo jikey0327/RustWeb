@@ -101,6 +101,33 @@ label {
     width: 20px;
     vertical-align: -16%;
 }
+#allieslist, #recentlist {
+    max-height: 200px;
+    overflow: auto;
+}
+#allieslist a, #recentlist a {
+    display: block;
+    padding: 3px;
+    font-size: 0.8em;
+    cursor: pointer;
+    border-bottom: 1px solid #1a1819;
+}
+#allieslist a {
+    padding-left: 29px;
+    background: transparent;
+    background-position: 3px center;
+    background-repeat: no-repeat;
+    background-size: 20px;
+}
+#allieslist a.friend {
+    background-image: url(../img/share-you.png);
+}
+#allieslist a.share {
+    background-image: url(../img/share-they.png);
+}
+#allieslist a.mutual {
+    background-image: url(../img/share-both.png);
+}
 #friends h2 {
     font-weight: normal;
     color: #736e70;

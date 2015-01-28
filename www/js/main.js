@@ -4,7 +4,9 @@ var iconSize = 20;              // landmark icon size
 var session = undefined;        // session data
 var locationUpdateRate = 5;     // location interpolations per second
 var players = {};               // known players by user id
-var locations = {};             // player locations by user id
+var allies = [];                // allies list
+var recent = [];                // recent players list
+var locations = {};             // player locations
 
 // Update status content
 function updateStatus(cb) {
@@ -140,6 +142,136 @@ function updatePlayerLocation(data) {
     loc.time = Date.now();
 }
 
+// Finds the ally element for the specified user id
+function findAlly(id) {
+    for (var i = 0; i < allies.length; ++i) {
+        if (allies[i].id == id)
+            return allies[i];
+    }
+    return null;
+}
+
+// Tests if the given user id is a friend
+function isFriend(id) {
+    if (!session)
+        return false;
+    for (var i = 0; i < session.friends.length; ++i) {
+        if (session.friends[i].id == id)
+            return true;
+    }
+    return false;
+}
+
+// Tests if the given user id is a share
+function isShare(id) {
+    if (!session)
+        return false;
+    for (var i = 0; i < session.shares.length; ++i) {
+        if (session.shares[i].id == id)
+            return true;
+    }
+    return false;
+}
+
+// Adds a friend
+function addFriend(id, name) {
+    var ally = findAlly(id);
+    if (!connect.socket || isFriend(id))
+        return;
+    if (!confirm('Do you really want to SHARE your location with {NAME}?'.replace("{NAME}", name)))
+        return;
+    console.log("requesting add of friend " + id);
+    connect.socket.send("friend.add " + JSON.stringify({ "id": id }));
+}
+
+// Removes a friend
+function removeFriend(id, name) {
+    var ally = findAlly(id);
+    if (!connect.socket || !isFriend(id))
+        return;
+    if (!confirm('Do you really want to NO LONGER SHARE your location with {NAME}?'.replace("{NAME}", name)))
+        return;
+    console.log("requesting delete of friend " + id);
+    connect.socket.send("friend.del " + JSON.stringify({"id": id }));
+}
+
+// Updates the allies list
+function updateAllies() {
+    if (!session)
+        return;
+    var done = [];
+    for (var i = 0; i < allies.length;) {
+        if (!isFriend(allies[i].id) && !isShare(allies[i].id)) {
+            console.log("clearing ally: " + allies[i].id);
+            $('#ally-' + allies[i].id).remove();
+            allies.splice(i, 1);
+        } else ++i;
+    }
+    var all = session.friends.slice();
+    Array.prototype.push.apply(all, session.shares);
+    $.each(all, function (i, data) {
+        if (done.indexOf(data.id) >= 0)
+            return;
+        var ally = findAlly(data.id);
+        if (ally == null) {
+            console.log("creating ally: " + data.id);
+            ally = {};
+            ally.id = data.id;
+            ally.name = data.name;
+            allies.push(ally);
+            ally.elem = $('<a id="ally-' + ally.id + '" class="player" />');
+            ally.elem.text(ally.name);
+            ally.elem.click(function () {
+                removeFriend(ally.id, ally.name);
+                return false;
+            });
+            $('#allieslist').append(ally.elem);
+        }
+        (ally.isFriend = isFriend(data.id))
+            ? ally.elem.addClass("friend") : ally.elem.removeClass("friend");
+        (ally.isShare = isShare(data.id))
+            ? ally.elem.addClass("share") : ally.elem.removeClass("share");
+        (ally.isMutual = ally.isFriend && ally.isShare)
+            ? ally.elem.addClass("mutual") : ally.elem.removeClass("mutual");
+        done.push(data.id);
+    });
+}
+
+// Finds the recent player element for the specified user id
+function findRecent(id) {
+    for (var i = 0; i < recent.length; ++i) {
+        if (recent[i].id == id)
+            return recent[i];
+    }
+    return null;
+}
+
+// Update recent players list
+function updateRecent() {
+    console.log("updating recent players ...");
+    $.getJSON("/recent.json", function (data) {
+        $.each(data, function (i, data) {
+            var player = findRecent(data.id);
+            if (player == null) {
+                player = {};
+                player.id = data.id;
+                player.name = data.name;
+                recent.push(player);
+                player.elem = $('<a id="recent-' + player.id + '" class="player "/>');
+                player.elem.text(data.name);
+                player.elem.click(function () {
+                    addFriend(player.id, player.name);
+                    return false;
+                });
+                $('#recentlist').prepend(player.elem);
+            }
+        });
+        console.log("updated recent players");
+    }).fail(function (xhr, err) {
+        console.log("recent players update failed: " + err.message);
+    });;
+}
+
 // Interpolate player locations `locationUpdateRate` times a second
 setInterval(function () {
     var now = Date.now();
@@ -153,7 +285,7 @@ setInterval(function () {
             transform: "rotate(" + loc.rot[1] + "deg)"
         });
     });
-}, 1000/locationUpdateRate);
+}, 1000 / locationUpdateRate);
 
 // Connect to the websocket endpoint and handle messages
 function connect() {
@@ -162,7 +294,7 @@ function connect() {
         return;
     }
     console.log("connecting to websocket ...");
-    var socket = new WebSocket("ws://" + document.location.hostname + ":" + document.location.port + "/ws");
+    var socket = connect.socket = new WebSocket("ws://" + document.location.hostname + ":" + document.location.port + "/ws");
     socket.onopen = function () {
         console.log("connected to websocket");
     }
@@ -178,6 +310,7 @@ function connect() {
             cmd = msg.substring(0, p);
             data = JSON.parse(msg.substring(p + 1));
         }
+        // console.log("recv "+cmd+" -> "+JSON.stringify(data));
         switch (cmd) {
             case "hello":
                 console.log("greeted by server");
@@ -189,33 +322,50 @@ function connect() {
                 userId = data.id;
                 toggleCss("signedin", true);
                 notify("<strong>You</strong> just signed in");
+                updateAllies();
+                updateRecent();
                 break;
             case "friend.add":
-                console.log("received added friend: " + data.id);
-                session.friends.push(data.id);
+                console.log("received added friend: " + data.id+"/"+data.name);
+                session.friends.push(data);
+                updateAllies();
                 break;
             case "friend.del":
-                console.log("received deleted friend: " + data.id);
-                var p = session.friends.indexOf(data.id);
-                if (p >= 0)
-                    session.friends.splice(p, 1);
+                console.log("received deleted friend: " + data.id+"/"+data.name);
+                for (var i = 0; i < session.friends.length; ++i) {
+                    if (session.friends[i].id == data.id) {
+                        session.friends.splice(i, 1);
+                        updateAllies();
+                        break;
+                    }
+                }
                 break;
             case "share.add":
-                console.log("received added share: " + data.id);
-                session.shares.push(data.id);
+                console.log("received added share: " + data.id+"/"+data.name);
+                session.shares.push(data);
+                updateAllies();
                 break;
             case "share.del":
-                console.log("received deleted share: " + data.id);
-                var p = session.shares.indexOf(data.id);
-                if (p >= 0)
-                    session.shares.splice(p, 1);
+                console.log("received deleted share: " + data.id+"/"+data.name);
+                for (var i = 0; i < session.shares.length; ++i) {
+                    if (session.shares[i].id == data.id) {
+                        session.shares.splice(i, 1);
+                        updateAllies();
+                        break;
+                    }
+                }
                 break;
             case "l"/*ocation*/:
                 updatePlayerLocation(data);
                 break;
             case "player.connect":
                 console.log("received player connect: " + data.id);
-                notify("<strong>"+escapeHtml(data.name) + "</strong> woke up");
+                notify("<strong>" + escapeHtml(data.name) + "</strong> woke up");
+                recent.unshift({
+                    "id": data.id,
+                    "name": data.name
+                });
+                updateRecent();
                 break;
             case "player.disconnect":
                 console.log("received player disconnect: " + data.id);
@@ -232,7 +382,7 @@ function connect() {
                 break;
             case "player.death":
                 console.log("received player death: " + data.id);
-                notify("<strong>" + escapeHtml(data.name) + "</strong> " + damageToReason(data.lastDamage));
+                notify(damageToReason(data.lastDamage).replace("{NAME}", "<strong>"+escapeHtml(data.name)+"</strong>"));
                 break;
             default:
                 console.log("received unknown command: " + cmd);
@@ -240,15 +390,26 @@ function connect() {
         }
     }
     socket.onclose = function (e) {
-        toggleCss("signedin", false);
         console.log("disconnected from websocket (trying to reconnect in 20s)");
         setTimeout(function () {
             connect();
         }, 20000);
+        toggleCss("signedin", false);
+        delete connect.socket;
+        cleanup();
     }
     socket.onerror = function (e) {
         console.log("websocket error: "+e.error);
     }
+}
+
+function cleanup() {
+    $('#allieslist .player').remove();
+    $('#recentlist .player').remove();
+    session = null;
+    allies = [];
+    recent = [];
+    locations = {};
 }
 
 $(document).ready(function () {
@@ -283,10 +444,19 @@ $(document).ready(function () {
                 updateBuildings(),
                 setInterval(updateBuildings, 60000 * 5);
 
-            // Connect a WebSocket for live updates after Steam signin
+            // Connect a WebSocket for live updates
             connect();
         });
     }).fail(function (xhr, err) {
         console.log("loading config failed:", err);
     });
+    onResize();
 });
+
+function onResize() {
+    var height = $(window).height();
+    var max = (height - 250) / 2;
+    $('#allieslist').css('max-height', max+'px');
+    $('#recentlist').css('max-height', max+'px');
+}
+$(window).resize(onResize);
