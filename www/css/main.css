@@ -85,6 +85,9 @@ label {
     width: 1000px;
     height: 1000px;
 }
+#map #landmarks {
+    cursor: crosshair;
+}
 #map #grid {
     position: absolute;
     width: 1050px;
@@ -115,7 +118,14 @@ label {
 }
 #friends .icon {
     width: 20px;
-    vertical-align: -16%;
+    vertical-align: -20%;
+}
+#allieslist .player .icon {
+    float: right;
+    opacity: 0.2;
+}
+#allieslist .player .icon:hover {
+    opacity: 1.0;
 }
 #allieslist, #recentlist {
     max-height: 200px;
@@ -154,7 +164,7 @@ label {
 #friends ul {
     margin: 10px 0;
     padding: 0;
-    min-height: 20px;
+    min-height: 18px;
     background: #232122;
 }
 #friends table.legend {

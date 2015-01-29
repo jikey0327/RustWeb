@@ -27,6 +27,11 @@ copy README.md build\README.md
 copy FAQ.md build\FAQ.md
 copy Oxide.Ext.RustWeb\README.md build\INSTALL-OXIDE2.md
 
+call ccjs build\server\www\js\helpers.js > build\server\www\js\helpers.min.js
+move /Y build\server\www\js\helpers.min.js build\server\www\js\helpers.js
+call ccjs build\server\www\js\main.js > build\server\www\js\main.min.js
+move /Y build\server\www\js\main.min.js build\server\www\js\main.js
+
 goto:eof
 ::ERRORS
 ::---------------------

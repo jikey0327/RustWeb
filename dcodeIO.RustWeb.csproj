@@ -231,12 +231,14 @@
     <Content Include="www\index.html" />
     <Content Include="www\js\helpers.js" />
     <Content Include="www\js\i18n.js" />
+    <Content Include="www\js\jquery.cookie.min.js" />
     <Content Include="www\js\jquery.min.js" />
+    <Content Include="www\js\jquery.notify.min.js" />
     <Content Include="www\js\main.js" />
-    <Content Include="www\js\notify.min.js" />
     <None Include="README.md" />
     <None Include="www\config.json" />
     <None Include="www\i18n\de.json" />
+    <None Include="www\i18n\en.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

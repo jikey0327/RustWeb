@@ -7,7 +7,8 @@
 <link rel="stylesheet" href="css/main.css" />
 <link rel="shortcut icon" href="favicon.ico" />
 <script src="js/jquery.min.js"></script>
-<script src="js/notify.min.js"></script>
+<script src="js/jquery.cookie.min.js"></script>
+<script src="js/jquery.notify.min.js"></script>
 <script src="js/helpers.js"></script>
 <script src="js/i18n.js"></script>
 </head>
@@ -15,8 +16,8 @@
 <div id="header">
     <ul class="info">
         <li class="first"><span id="level">Procedural Map</span></li>
-        <li><span id="numplayers">0</span> / <span id="maxplayers">0</span> players</li>
-        <li><span id="sleepers">0</span> sleepers</li>
+        <li id="numplayers">0 / 0 players</li>
+        <li id="numsleepers">0 sleepers</li>
         <li class="not-signedin"><a id="signin" href="/signin"><img src="img/sits_small.png" alt="Sign in through STEAM" /></a></li>
     </ul>
     <h1><span id="hostname">Rust Server</span></h1>
@@ -28,28 +29,28 @@
         <div id="landmarks"></div>
     </div>
     <p id="displayoptions">
-        Display: &nbsp;
-        <label for="landmarks-checkbox"><input id="landmarks-checkbox" type="checkbox" checked="checked" /> Landmarks</label> &nbsp;
-        <span class="displayBuildings" style="display: none"><label for="buildings-checkbox"><input id="buildings-checkbox" type="checkbox" checked="checked" /> Buildings</label> &nbsp;</span>
-        <label for="grid-checkbox"><input id="grid-checkbox" type="checkbox" checked="checked" /> Grid</label>
+        <span class="i18n">Display:</span> &nbsp;
+        <label for="landmarks-checkbox"><input id="landmarks-checkbox" type="checkbox" checked="checked" /> <span class="i18n">Landmarks</span></label> &nbsp;
+        <span class="displayBuildings" style="display: none"><label for="buildings-checkbox"><input id="buildings-checkbox" type="checkbox" checked="checked" /> <span class="i18n">Buildings</span></label> &nbsp;</span>
+        <label for="grid-checkbox"><input id="grid-checkbox" type="checkbox" checked="checked" /> <span class="i18n">Grid</span></label>
     </p>
 </div>
 <div id="friends" class="signedin">
     <div style="float: right">
         <a href="#" onclick="$('#friends-toggle').toggle(); return false"><img src="img/minmax.png" class="icon" /></a>
     </div>
-    <h2>Allies</h2>
+    <h2 class="i18n">Allies</h2>
     <div id="friends-toggle">
         <ul id="allieslist">
         </ul>
-        <h2>Recent players</h2>
+        <h2 class="i18n">Recent players</h2>
         <ul id="recentlist">
         </ul>
-        <h2>Who shares their location?</h2>
+        <h2 class="i18n">Who shares their location?</h2>
         <table class="legend"><tr>
-            <td><img src="img/share-you.png" class="icon" /> You</td>
-            <td><img src="img/share-they.png" class="icon" /> They</td>
-            <td><img src="img/share-both.png" class="icon" /> Mutually</td>
+            <td><img src="img/share-you.png" class="icon" /> <span class="i18n">You</span></td>
+            <td><img src="img/share-they.png" class="icon" /> <span class="i18n">They</span></td>
+            <td><img src="img/share-both.png" class="icon" /> <span class="i18n">Mutually</span></td>
         </tr></table>
     </div>
 </div>

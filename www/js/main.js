@@ -1,6 +1,9 @@
-﻿var config = {};                // config.json contents
+﻿// RustWeb Main - http://github.com/dcodeIO/RustWeb
+
+var config = {};                // config.json contents
 var server = {};                // status.json contents
 var iconSize = 20;              // landmark icon size
+var gridSize = 38.5;              // grid cell size
 var session = undefined;        // session data
 var locationUpdateRate = 5;     // location interpolations per second
 var players = {};               // known players by user id
@@ -8,18 +11,25 @@ var allies = [];                // allies list
 var recent = [];                // recent players list
 var locations = {};             // player locations
 
-// Update status content
+// Element references to reduce lookups
+var $friends    = $('#friends');
+var $allieslist = $('#allieslist');
+var $recentlist = $('#recentlist');
+var $buildings  = $('#buildings');
+var $landmarks  = $('#landmarks');
+var $grid       = $('#grid');
+
+// Updates status specific content
 function updateStatus(cb) {
     console.log("updating status ...");
     $.getJSON("/status.json", function (data) {
         server = data;
-        $.each(data, function (k, v) {
-            if (typeof v !== "string" && typeof v !== "number")
-                return;
-            $("#" + k).text(v);
-        });
-        $('#level').prop("title", _("Worldsize")+" "+data.worldsize + ", "+_("Seed")+" "+data.seed);
-        document.title = "RustWeb :: " + server.hostname;
+        $('#hostname').text(server.hostname);
+        $('#level').text(_(server.level))
+                   .prop("title", _("Worldsize {WORLDSIZE}, Seed {SEED}", { "WORLDSIZE": server.worldsize, "SEED": server.seed }));
+        $('#numplayers').text(_("{NUM} / {MAX} players", { "NUM": server.numplayers, "MAX": server.maxplayers }));
+        $('#numsleepers').text(_("{NUM} sleepers", { "NUM": server.sleepers }));
+        document.title = server.hostname;
         if (data.players) {
             players = {};
             $.each(data.players, function (i, p) {
@@ -35,7 +45,7 @@ function updateStatus(cb) {
     });
 }
 
-// Update monuments content
+// Updates monuments specific content
 function updateMonuments(cb) {
     console.log("updating monuments ...");
     $.getJSON("/monuments.json", function (data) {
@@ -76,7 +86,7 @@ function updateMonuments(cb) {
     });
 }
 
-// Update buildings overlay
+// Updates the buildings overlay
 function updateBuildings(cb) {
     console.log("updating buildings ...");
     $.getJSON("/buildings.json", function (data) {
@@ -115,7 +125,7 @@ function updateBuildings(cb) {
     });;
 }
 
-// Update a single player's location data
+// Updates a single player's location data
 function updatePlayerLocation(data) {
     var loc, pos = worldToMap(data), rot = data.r;
     if (!locations.hasOwnProperty(data.id)) {
@@ -141,7 +151,7 @@ function updatePlayerLocation(data) {
     loc.time = Date.now();
 }
 
-// Finds the ally element for the specified user id
+// Finds the ally item for the specified user id
 function findAlly(id) {
     for (var i = 0; i < allies.length; ++i) {
         if (allies[i].id == id)
@@ -183,8 +193,8 @@ function addFriend(id, name) {
     connect.socket.send("friend.add " + JSON.stringify({ "id": id }));
 }
 
-// Removes a friend
-function removeFriend(id, name) {
+// Deletes a friend
+function deleteFriend(id, name) {
     var ally = findAlly(id);
     if (!connect.socket || !isFriend(id))
         return;
@@ -192,6 +202,17 @@ function removeFriend(id, name) {
         return;
     console.log("requesting delete of friend " + id);
     connect.socket.send("friend.del " + JSON.stringify({"id": id }));
+}
+
+// Deletes a friend including their foreign relationship
+function deleteForeignFriend(id, name) {
+    var ally = findAlly(id);
+    if (!connect.socket || (!isFriend(id) && !isAlly(id)))
+        return;
+    if (!confirm(_('Do you really want to MUTUALLY DELETE your connection to \"{NAME}\"?', { "NAME": name })))
+        return;
+    console.log("requesting delete of foreign friend " + id);
+    connect.socket.send("foreign.del " + JSON.stringify({ "id": id }));
 }
 
 // Updates the allies list
@@ -222,11 +243,16 @@ function updateAllies() {
             ally.elem.text(ally.name);
             ally.elem.click(function () {
                 if (isFriend(ally.id))
-                    removeFriend(ally.id, ally.name);
+                    deleteFriend(ally.id, ally.name);
                 else
                     addFriend(ally.id, ally.name);
                 return false;
             });
+            ally.elem.append($('<img class="icon" src="/img/revoke.png" />').click(function (evt) {
+                deleteForeignFriend(ally.id, ally.name);
+                evt.stopPropagation();
+                return false;
+            }));
             var beforeElem = null;
             for (var i in allies) {
                 if (!allies.hasOwnProperty(i))
@@ -262,6 +288,8 @@ function findRecent(id) {
 
 // Adds or updates a recent player
 function addRecent(id, name) {
+    if (session && session.id == id)
+        return;
     var player = findRecent(id);
     if (player == null) {
         player = {};
@@ -281,7 +309,7 @@ function addRecent(id, name) {
     return player;
 }
 
-// Update recent players list
+// Updates the recent players list (called once)
 function updateRecent() {
     console.log("updating recent players ...");
     $.getJSON("/recent.json", function (data) {
@@ -294,7 +322,7 @@ function updateRecent() {
     });;
 }
 
-// Interpolate player locations `locationUpdateRate` times a second
+// Interpolates player locations 'locationUpdateRate' times a second
 setInterval(function () {
     var now = Date.now();
     $.each(locations, function (id, loc) {
@@ -309,8 +337,8 @@ setInterval(function () {
     });
 }, 1000 / locationUpdateRate);
 
-var labelsX = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L","M","N","O","P","Q","R","S","T"],
-    labelsY = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12","13","14","15","16","17","18","19","20"];
+var labelsX = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''),
+    labelsY = []; for (var i = 1; i <= 26; ++i) labelsY.push(""+i);
 
 // Updates the grid canvas
 function updateGrid() {
@@ -319,10 +347,7 @@ function updateGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.beginPath();
-    /* ctx.moveTo(999.5, 0.5);
-    ctx.lineTo(999.5, 999.5);
-    ctx.lineTo(0.5, 999.5); */
-    for (var x = 50; x < 1000; x += 50) {
+    for (var x = gridSize; x < 1000; x += gridSize) {
         ctx.moveTo(x-0.5, 0.5);
         ctx.lineTo(x-0.5, 999.5);
         ctx.moveTo(0.5, x-0.5);
@@ -331,20 +356,20 @@ function updateGrid() {
     ctx.strokeStyle = "rgba(255,255,255,0.08)"
     ctx.stroke();
     ctx.fillStyle = "rgba(255,255,255,0.5)";
-    var textSize = 20;
+    var textSize = 18;
     ctx.font = textSize+'px sans-serif';
-    for (var x = 0, i = 0; x < 1000; x += 50, i++) {
+    for (var x = 0, i = 0; x < 1000; x += gridSize, i++) {
         var yLabel = labelsY[i],
             xLabel = labelsX[i],
             fm = ctx.measureText(yLabel);
-        ctx.fillText(yLabel, 1000+(50-fm.width)/2, x + textSize + 11.5);
+        ctx.fillText(yLabel, 1000 + (gridSize - fm.width) / 2, x + textSize + (gridSize - textSize)/2 - 4);
         fm = ctx.measureText(xLabel);
-        ctx.fillText(xLabel, x+(50-fm.width)/2, 1000 + textSize + 11);
+        ctx.fillText(xLabel, x + (gridSize - fm.width) / 2, 1000 + textSize + 11);
     }
     ctx.restore();
 }
 
-// Connect to the websocket endpoint and handle messages
+// Connects to the websocket endpoint and then handles messages
 function connect() {
     if (typeof WebSocket == "undefined") {
         alert(_("Sorry, your browser does not support WebSockets. Please consider upgrade to use RustWeb!"));
@@ -403,7 +428,7 @@ function connect() {
                 console.log("received added share: " + data.id);
                 session.shares.push(data);
                 updateAllies();
-                notify("{NAME} now shares their location with you".replace("{NAME}", "<strong>" + escapeHtml(data.name) + "</strong>"));
+                notify(_("{NAME} now shares their location with you", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>"}));
                 var loc = locations[data.id];
                 if (loc)
                     loc.elem.prop("src", "/img/ally.png");
@@ -419,7 +444,7 @@ function connect() {
                             loc.elem.remove();
                             delete locations[data.id];
                         }
-                        notify("{NAME} no longer shares their location with you".replace("{NAME}", "<strong>"+escapeHtml(data.name)+"</strong>"));
+                        notify(_("{NAME} no longer shares their location with you", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
                         break;
                     }
                 }
@@ -429,7 +454,7 @@ function connect() {
                 break;
             case "player.connect":
                 console.log("received player connect: " + data.id);
-                notify(_("{NAME} woke up", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
+                notify(_("{NAME} just woke up", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
                 var recentPlayer = addRecent(data.id, data.name);
                 $recentlist.prepend(recentPlayer.elem.detach());
                 break;
@@ -469,59 +494,8 @@ function connect() {
     }
 }
 
-// Cleans up on signoff
-function cleanup() {
-    $.each(allies, function (i, ally) {
-        ally.elem.remove();
-    });
-    $.each(recent, function (i, player) {
-        player.elem.remove();
-    });
-    $.each(locations, function (id, loc) {
-        loc.elem.remove();
-    });
-    session = null;
-    allies = [];
-    recent = [];
-    locations = {};
-}
-
-// Element references to reduce lookups
-var $friends = $('#friends');
-var $allieslist = $('#allieslist');
-var $recentlist = $('#recentlist');
-var $buildings = $('#buildings');
-var $landmarks = $('#landmarks');
-var $grid = $('#grid');
-
-$(document).ready(function () {
-    console.log("initializing ...");
-    toggleCss("signedin", false);
-    updateGrid();
-
-    // Enable toggling of landmarks and buildings
-    var landmarksCheckbox = $('#landmarks-checkbox');
-    landmarksCheckbox.change(function () {
-        $landmarks.css("display", landmarksCheckbox.is(":checked") ? "block" : "none");
-    });
-    var buildingsCheckbox = $('#buildings-checkbox');
-    buildingsCheckbox.change(function () {
-        $buildings.css("display", buildingsCheckbox.is(":checked") ? "block" : "none");
-    });
-    var gridCheckbox = $('#grid-checkbox');
-    gridCheckbox.change(function () {
-        $grid.css("display", gridCheckbox.is(":checked") ? "block" : "none");
-    });
-
-    // Disable propagation of scroll events over allies lists
-    $('#friends').bind("mousewheel DOMMouseScroll", function (evt) {
-        evt.preventDefault();
-        // return false;
-    });
-    /* $('#allieslist, #recentlist').bind("mousewheel DOMMouseScroll", function (evt) {
-        return true;
-    }); */
-
+// Initializes the app
+function init() {
     console.log("loading config ...");
     $.getJSON("/config.json", function (data) {
         config = data;
@@ -548,9 +522,81 @@ $(document).ready(function () {
     }).fail(function (xhr, err) {
         console.log("loading config failed:", err);
     });
+}
+
+$(document).ready(function () {
+    console.log("initializing ...");
+    toggleCss("signedin", false);
+    updateGrid();
+
+    // Enable toggling of landmarks, buildings and grid
+    var landmarksCheckbox = $('#landmarks-checkbox');
+    landmarksCheckbox.change(function () {
+        $landmarks.css("display", landmarksCheckbox.is(":checked") ? "block" : "none");
+    });
+    var buildingsCheckbox = $('#buildings-checkbox');
+    buildingsCheckbox.change(function () {
+        $buildings.css("display", buildingsCheckbox.is(":checked") ? "block" : "none");
+    });
+    var gridCheckbox = $('#grid-checkbox');
+    gridCheckbox.change(function () {
+        $grid.css("display", gridCheckbox.is(":checked") ? "block" : "none");
+    });
+
+    // Update landmarks layer title on mouse move
+    $landmarks.bind("mousemove", function (evt) {
+        var pos = mapToWorld({
+            "x": evt.offsetX,
+            "y": evt.offsetY
+        });
+        $landmarks.prop("title", Math.round(pos.x) + " / " + Math.round(pos.z));
+    });
+
+    // Disable propagation of scroll events from allies lists to page
+    $('#allieslist, #recentlist').bind("mousewheel DOMMouseScroll", function (e) {
+        var scrollTo;
+        if (e.type == 'mousewheel') {
+            scrollTo = (e.originalEvent.wheelDelta * -1);
+        }
+        else if (e.type == 'DOMMouseScroll') {
+            scrollTo = 40 * e.originalEvent.detail;
+        }
+        if (scrollTo) {
+            e.stopPropagation();
+            e.preventDefault();
+            $(this).scrollTop(scrollTo + $(this).scrollTop());
+            return false;
+        }
+    });
+
+    var lang = $.cookie('lang');
+    if (!lang || lang == "en")
+        init();
+    else
+        i18n.load(lang, function (err) {
+            init();
+        });
     onResize();
 });
 
+// Cleans up on signoff
+function cleanup() {
+    $.each(allies, function (i, ally) {
+        ally.elem.remove();
+    });
+    $.each(recent, function (i, player) {
+        player.elem.remove();
+    });
+    $.each(locations, function (id, loc) {
+        loc.elem.remove();
+    });
+    session = null;
+    allies = [];
+    recent = [];
+    locations = {};
+}
+
+// Properly resizes contents if required
 function onResize() {
     var height = $(window).height();
     var max = (height - 250) / 2;

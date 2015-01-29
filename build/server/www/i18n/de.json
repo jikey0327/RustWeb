@@ -1,1 +1,57 @@
-﻿{}
+﻿{
+	"Procedural Map": "Prozedurale Karte",
+	"Worldsize {WORLDSIZE}, Seed {SEED}": "Kartengröße {WORLDSIZE}, Basiswert {SEED}",
+	"{NUM} / {MAX} players": "{NUM} / {MAX} Spielern",
+	"{NUM} sleepers": "{NUM} Schläfer",
+	"Display:": "Anzeige:",
+	"Landmarks": "Orientierungspunkte",
+	"Buildings": "Gebäude",
+	"Grid": "Raster",
+
+	"Wolf Monument": "Wolfstatue",
+	"Lighthouse": "Leuchtturm",
+	"Satellite Dish": "Satellitenschüssel",
+	"Cave": "Höhle",
+	"Radtown": "Radtown",
+
+	"Allies": "Alliierte",
+	"Recent players": "Letzte Spieler",
+	"Who shares their location?": "Wer teilt seine Position?",
+	"You": "Du",
+	"They": "Spieler",
+	"Mutually": "Beidseitig",
+
+	"Do you really want to SHARE your location with \"{NAME}\"?": "Möchtest du deine Position wirklich mit \"{NAME}\" teilen?",
+	"Do you really want to NO LONGER SHARE your location with \"{NAME}\"?": "Möchtest du deine Position wirklich NICHT MEHR mit \"{NAME}\" teilen?",
+	"Do you really want to MUTUALLY DELETE your connection to \"{NAME}\"?": "Möchtest du deine Verbindung mit {NAME} wirklich beidseitig löschen?",
+	"Sorry, your browser does not support WebSockets. Please consider upgrade to use RustWeb!": "Sorry, dein Browser unterstützt keine WebSockets. Bitte erwäge ein Upgrade, um RustWeb zu nutzen!",
+
+	"{YOU} just signed in": "{YOU} hast dich gerade eingeloggt",
+	"{YOU} now share your location with {NAME}": "{YOU} teilst deine Position jetzt mit {NAME}",
+	"{YOU} no longer share your location with {NAME}": "{YOU} teilst deine Position jetzt nicht mehr mit {NAME}",
+	"{NAME} now shares their location with you": "{NAME} teilt seine Position jetzt mit dir",
+	"{NAME} no longer shares their location with you": "{NAME} teilt seine Position nicht länger mit dir",
+	"{NAME} just woke up": "{NAME} ist gerade aufgewacht",
+	"{NAME} felt asleep": "{NAME} ist eingeschlafen",
+	"{NAME} says:": "{NAME} sagt:",
+	"{NAME} spawned in the middle of nowhere": "{NAME} ist nun irgendwo im Nirgendwo",
+
+	"{NAME} died of malnutrition": "{NAME} ist an Unterernährung gestorben",
+	"{NAME} died of dehydration": "{NAME} ist an Dehydration gestorben",
+	"{NAME} died of hypothermia": "{NAME} ist an Hypothermie gestorben",
+	"{NAME} died of asphyxiation": "{NAME} ist an Erstickung gestorben",
+	"{NAME} died of hyperthermia": "{NAME} ist an Hyperthermie gestorben",
+	"{NAME} died of hemorrhage": "{NAME} ist an Hämorrhagie gestorben",
+	"{NAME} died of intoxication": "{NAME} ist an einer Vergiftung gestorben",
+	"{NAME} committed suicide": "{NAME} hat Selbstmord begangen",
+	"{NAME} died of generalization": "{NAME} ist an Generalisierung gestorben",
+	"{NAME} died of perforation": "{NAME} ist an Perforation gestorben",
+	"{NAME} died of dissection": "{NAME} ist an Dissektion gestorben",
+	"{NAME} died of contusion": "{NAME} ist an Kontusion gestorben",
+	"{NAME} died of precipitation": "{NAME} ist an Präzipitation gestorben",
+	"{NAME} died of radiation": "{NAME} ist an Verstrahlung gestorben",
+	"{NAME} died of amputation": "{NAME} ist durch Amputation gestorben",
+	"{NAME} died of something": "{NAME} ist durch irgendetwas gestorben",
+
+	"This is you!": "Das bist du!"
+}

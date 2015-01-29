@@ -3,12 +3,12 @@ if (typeof console === 'undefined')
     console = {};
 console.log = console.log || function () { };
 
-// Escape HTML special characters
+// Escapes HTML special characters
 function escapeHtml(str) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// Toggle element visibility by class and boolish condition
+// Toggles element visibility by class and boolish condition
 function toggleCss(name, satisfied) {
     if (satisfied) {
         $('.' + name).show();
@@ -23,7 +23,7 @@ function toggleCss(name, satisfied) {
     }
 }
 
-// Lerp between two 2D vectors
+// Lerps between two 2D vectors
 function lerp(a, b, t) {
     t = t < 0 ? 0 : t > 1 ? 1 : t;
     return {
@@ -32,15 +32,23 @@ function lerp(a, b, t) {
     };
 }
 
-// Convert from world to map coordinates (requires worldsize to be known)
+// Converts from world to map coordinates (requires worldsize to be known)
 function worldToMap(position) {
     return {
-        "x": ((position.x + server.worldsize / 2) / server.worldsize * 1000) | 0,
-        "y": (1000 - ((position.z + server.worldsize / 2) / server.worldsize * 1000)) | 0
+        "x": ((position.x + server.worldsize / 2) / server.worldsize * 1000),
+        "y": (1000 - ((position.z + server.worldsize / 2) / server.worldsize * 1000))
     };
 }
 
-// Convert a damage type to a textual reason
+// Converts from map to world coodirnates (requires worldsize to be known)
+function mapToWorld(position) {
+    return {
+        "x": (position.x - 500) * (server.worldsize / 1000),
+        "z": -(position.y - 500) * (server.worldsize / 1000)
+    };
+};
+
+// Converts a damage type to a textual reason
 function damageToReason(dmg) {
     switch (dmg) {
         case "Hunger":
@@ -77,7 +85,7 @@ function damageToReason(dmg) {
     return "{NAME} died of something";
 }
 
-// Pop up a notification
+// Pops up a notification
 function notify(html) {
     $.notify(html, { position: "bottom left", autoHideDelay: 10000 });
 }
