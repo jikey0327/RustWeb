@@ -18,7 +18,7 @@ function updateStatus(cb) {
                 return;
             $("#" + k).text(v);
         });
-        $('#level').prop("title", "Worldsize " + data.worldsize + ", Seed " + data.seed);
+        $('#level').prop("title", _("Worldsize")+" "+data.worldsize + ", "+_("Seed")+" "+data.seed);
         document.title = "RustWeb :: " + server.hostname;
         if (data.players) {
             players = {};
@@ -38,26 +38,25 @@ function updateStatus(cb) {
 // Update monuments content
 function updateMonuments(cb) {
     console.log("updating monuments ...");
-    var root = $('#landmarks');
     $.getJSON("/monuments.json", function (data) {
         $.each(data, function (i, obj) {
             var img,
                 title;
             if (/wolf_monument/.test(obj.name)) {
                 img = "/img/wolf.png";
-                title = "Wolf Monument";
+                title = _("Wolf Monument");
             } else if (/lighthouse_monument/.test(obj.name)) {
                 img = "/img/lighthouse.png";
-                title = "Lighthouse";
+                title = _("Lighthouse");
             } else if (/dish_monument/.test(obj.name)) {
                 img = "/img/dish.png";
-                title = "Satellite Dish";
+                title = _("Satellite Dish");
             } else if (/cave/.test(obj.name)) {
                 img = "/img/cave.png";
-                title = "Cave";
+                title = _("Cave");
             } else if (/radtown/.test(obj.name)) {
                 img = "/img/radtown.png";
-                title = "Radtown";
+                title = _("Radtown");
             }
             if (img) {
                 elem = $('<img class="monument" src="' + img + '" alt="" title="' + title + '" />');
@@ -67,7 +66,7 @@ function updateMonuments(cb) {
                     left: (pos.x - iconSize / 2) + "px",
                     top: (pos.y - iconSize / 2) + "px"
                 });
-                root.append(elem);
+                $landmarks.append(elem);
             }
         });
         console.log("monuments updated");
@@ -121,9 +120,9 @@ function updatePlayerLocation(data) {
     var loc, pos = worldToMap(data), rot = data.r;
     if (!locations.hasOwnProperty(data.id)) {
         console.log("creating player " + data.id);
-        $('#landmarks').append(elem = $('<img class="monument" alt="" id="player-'+data.id+'" />'));
-        elem.prop("src", '/img/' + (userId === data.id ? "self" : "player") + '.png');
-        elem.prop("title", userId === data.id ? "This is you!" : players[data.id] ? players[data.id]['name'] : data.id);
+        $landmarks.append(elem = $('<img class="player" alt="" id="player-'+data.id+'" />'));
+        elem.prop("src", '/img/' + (userId === data.id ? "self" : isShare(data.id) ? "ally" : "player") + '.png');
+        elem.prop("title", userId === data.id ? _("This is you!") : players[data.id] ? players[data.id]['name'] : data.id);
         elem.css({
             width: iconSize + "px",
             left: (pos.x - iconSize / 2) + "px",
@@ -176,9 +175,9 @@ function isShare(id) {
 // Adds a friend
 function addFriend(id, name) {
     var ally = findAlly(id);
-    if (!connect.socket || isFriend(id))
+    if (!connect.socket || isFriend(id) || id == session.id)
         return;
-    if (!confirm('Do you really want to SHARE your location with {NAME}?'.replace("{NAME}", name)))
+    if (!confirm(_('Do you really want to SHARE your location with "{NAME}"?', { "NAME": name })))
         return;
     console.log("requesting add of friend " + id);
     connect.socket.send("friend.add " + JSON.stringify({ "id": id }));
@@ -189,7 +188,7 @@ function removeFriend(id, name) {
     var ally = findAlly(id);
     if (!connect.socket || !isFriend(id))
         return;
-    if (!confirm('Do you really want to NO LONGER SHARE your location with {NAME}?'.replace("{NAME}", name)))
+    if (!confirm(_('Do you really want to NO LONGER SHARE your location with "{NAME}"?', { "NAME": name })))
         return;
     console.log("requesting delete of friend " + id);
     connect.socket.send("friend.del " + JSON.stringify({"id": id }));
@@ -222,10 +221,25 @@ function updateAllies() {
             ally.elem = $('<a id="ally-' + ally.id + '" class="player" />');
             ally.elem.text(ally.name);
             ally.elem.click(function () {
-                removeFriend(ally.id, ally.name);
+                if (isFriend(ally.id))
+                    removeFriend(ally.id, ally.name);
+                else
+                    addFriend(ally.id, ally.name);
                 return false;
             });
-            $('#allieslist').append(ally.elem);
+            var beforeElem = null;
+            for (var i in allies) {
+                if (!allies.hasOwnProperty(i))
+                    continue;
+                if (allies[i].name.toLowerCase() > ally.name.toLowerCase()) {
+                    beforeElem = allies[i].elem;
+                    break;
+                }
+            }
+            if (beforeElem != null)
+                ally.elem.insertBefore(beforeElem);
+            else
+                $allieslist.append(ally.elem);
         }
         (ally.isFriend = isFriend(data.id))
             ? ally.elem.addClass("friend") : ally.elem.removeClass("friend");
@@ -246,25 +260,33 @@ function findRecent(id) {
     return null;
 }
 
+// Adds or updates a recent player
+function addRecent(id, name) {
+    var player = findRecent(id);
+    if (player == null) {
+        player = {};
+        player.id = id;
+        player.name = name;
+        recent.push(player);
+    }
+    if (!player.elem) {
+        player.elem = $('<a id="recent-' + player.id + '" class="player "/>');
+        player.elem.text(player.name);
+        player.elem.click(function () {
+            addFriend(player.id, player.name);
+            return false;
+        });
+        $recentlist.append(player.elem);
+    }
+    return player;
+}
+
 // Update recent players list
 function updateRecent() {
     console.log("updating recent players ...");
     $.getJSON("/recent.json", function (data) {
         $.each(data, function (i, data) {
-            var player = findRecent(data.id);
-            if (player == null) {
-                player = {};
-                player.id = data.id;
-                player.name = data.name;
-                recent.push(player);
-                player.elem = $('<a id="recent-' + player.id + '" class="player "/>');
-                player.elem.text(data.name);
-                player.elem.click(function () {
-                    addFriend(player.id, player.name);
-                    return false;
-                });
-                $('#recentlist').prepend(player.elem);
-            }
+            addRecent(data.id, data.name);
         });
         console.log("updated recent players");
     }).fail(function (xhr, err) {
@@ -287,10 +309,45 @@ setInterval(function () {
     });
 }, 1000 / locationUpdateRate);
 
+var labelsX = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L","M","N","O","P","Q","R","S","T"],
+    labelsY = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12","13","14","15","16","17","18","19","20"];
+
+// Updates the grid canvas
+function updateGrid() {
+    var canvas = document.getElementById("grid");
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.beginPath();
+    /* ctx.moveTo(999.5, 0.5);
+    ctx.lineTo(999.5, 999.5);
+    ctx.lineTo(0.5, 999.5); */
+    for (var x = 50; x < 1000; x += 50) {
+        ctx.moveTo(x-0.5, 0.5);
+        ctx.lineTo(x-0.5, 999.5);
+        ctx.moveTo(0.5, x-0.5);
+        ctx.lineTo(999.5, x-0.5);
+    }
+    ctx.strokeStyle = "rgba(255,255,255,0.08)"
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    var textSize = 20;
+    ctx.font = textSize+'px sans-serif';
+    for (var x = 0, i = 0; x < 1000; x += 50, i++) {
+        var yLabel = labelsY[i],
+            xLabel = labelsX[i],
+            fm = ctx.measureText(yLabel);
+        ctx.fillText(yLabel, 1000+(50-fm.width)/2, x + textSize + 11.5);
+        fm = ctx.measureText(xLabel);
+        ctx.fillText(xLabel, x+(50-fm.width)/2, 1000 + textSize + 11);
+    }
+    ctx.restore();
+}
+
 // Connect to the websocket endpoint and handle messages
 function connect() {
     if (typeof WebSocket == "undefined") {
-        console.log("Sorry, your browser does not support WebSockets. Maybe consider an upgrade.");
+        alert(_("Sorry, your browser does not support WebSockets. Please consider upgrade to use RustWeb!"));
         return;
     }
     console.log("connecting to websocket ...");
@@ -321,36 +378,48 @@ function connect() {
                 session = data;
                 userId = data.id;
                 toggleCss("signedin", true);
-                notify("<strong>You</strong> just signed in");
+                notify(_("{YOU} just signed in", { "YOU": "<strong>"+_("You")+"</strong>" }));
                 updateAllies();
                 updateRecent();
                 break;
             case "friend.add":
-                console.log("received added friend: " + data.id+"/"+data.name);
+                console.log("received added friend: " + data.id);
                 session.friends.push(data);
                 updateAllies();
+                notify(_("{YOU} now share your location with {NAME}", { "YOU": "<strong>"+_("You")+"</strong>", "NAME": "<strong>"+escapeHtml(data.name)+"</strong>" }));
                 break;
             case "friend.del":
-                console.log("received deleted friend: " + data.id+"/"+data.name);
+                console.log("received deleted friend: " + data.id);
                 for (var i = 0; i < session.friends.length; ++i) {
                     if (session.friends[i].id == data.id) {
                         session.friends.splice(i, 1);
                         updateAllies();
+                        notify(_("{YOU} no longer share your location with {NAME}", { "YOU": "<strong>" + _("You") + "</strong>", "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
                         break;
                     }
                 }
                 break;
             case "share.add":
-                console.log("received added share: " + data.id+"/"+data.name);
+                console.log("received added share: " + data.id);
                 session.shares.push(data);
                 updateAllies();
+                notify("{NAME} now shares their location with you".replace("{NAME}", "<strong>" + escapeHtml(data.name) + "</strong>"));
+                var loc = locations[data.id];
+                if (loc)
+                    loc.elem.prop("src", "/img/ally.png");
                 break;
             case "share.del":
-                console.log("received deleted share: " + data.id+"/"+data.name);
+                console.log("received deleted share: " + data.id);
                 for (var i = 0; i < session.shares.length; ++i) {
                     if (session.shares[i].id == data.id) {
                         session.shares.splice(i, 1);
                         updateAllies();
+                        var loc = locations[data.id];
+                        if (loc) {
+                            loc.elem.remove();
+                            delete locations[data.id];
+                        }
+                        notify("{NAME} no longer shares their location with you".replace("{NAME}", "<strong>"+escapeHtml(data.name)+"</strong>"));
                         break;
                     }
                 }
@@ -360,25 +429,22 @@ function connect() {
                 break;
             case "player.connect":
                 console.log("received player connect: " + data.id);
-                notify("<strong>" + escapeHtml(data.name) + "</strong> woke up");
-                recent.unshift({
-                    "id": data.id,
-                    "name": data.name
-                });
-                updateRecent();
+                notify(_("{NAME} woke up", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
+                var recentPlayer = addRecent(data.id, data.name);
+                $recentlist.prepend(recentPlayer.elem.detach());
                 break;
             case "player.disconnect":
                 console.log("received player disconnect: " + data.id);
                 $('#player-' + data.id).remove();
-                notify("<strong>" + escapeHtml(data.name) + "</strong> felt asleep");
+                notify(_("{NAME} felt asleep", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
                 break;
             case "player.chat":
                 console.log("received player spawn: " + data.id);
-                notify("<strong>" + escapeHtml(data.name) + "</strong> : <span style=\"color:#fff\">" + escapeHtml(data.message)+"</span>");
+                notify(_("{NAME} says:", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }) + " " + escapeHtml(data.message));
                 break;
             case "player.spawn":
                 console.log("received player spawn: " + data.id);
-                notify("<strong>" + escapeHtml(data.name) + "</strong> spawned in the middle of nowhere");
+                notify(_("{NAME} spawned in the middle of nowhere", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
                 break;
             case "player.death":
                 console.log("received player death: " + data.id);
@@ -403,26 +469,58 @@ function connect() {
     }
 }
 
+// Cleans up on signoff
 function cleanup() {
-    $('#allieslist .player').remove();
-    $('#recentlist .player').remove();
+    $.each(allies, function (i, ally) {
+        ally.elem.remove();
+    });
+    $.each(recent, function (i, player) {
+        player.elem.remove();
+    });
+    $.each(locations, function (id, loc) {
+        loc.elem.remove();
+    });
     session = null;
     allies = [];
     recent = [];
     locations = {};
 }
 
+// Element references to reduce lookups
+var $friends = $('#friends');
+var $allieslist = $('#allieslist');
+var $recentlist = $('#recentlist');
+var $buildings = $('#buildings');
+var $landmarks = $('#landmarks');
+var $grid = $('#grid');
+
 $(document).ready(function () {
     console.log("initializing ...");
     toggleCss("signedin", false);
+    updateGrid();
 
     // Enable toggling of landmarks and buildings
-    $('#landmarks-checkbox').change(function () {
-        $('#landmarks').css("display", $('#landmarks-checkbox').is(":checked") ? "block" : "none");
+    var landmarksCheckbox = $('#landmarks-checkbox');
+    landmarksCheckbox.change(function () {
+        $landmarks.css("display", landmarksCheckbox.is(":checked") ? "block" : "none");
     });
-    $('#buildings-checkbox').change(function () {
-        $('#buildings').css("display", $('#buildings-checkbox').is(":checked") ? "block" : "none");
+    var buildingsCheckbox = $('#buildings-checkbox');
+    buildingsCheckbox.change(function () {
+        $buildings.css("display", buildingsCheckbox.is(":checked") ? "block" : "none");
     });
+    var gridCheckbox = $('#grid-checkbox');
+    gridCheckbox.change(function () {
+        $grid.css("display", gridCheckbox.is(":checked") ? "block" : "none");
+    });
+
+    // Disable propagation of scroll events over allies lists
+    $('#friends').bind("mousewheel DOMMouseScroll", function (evt) {
+        evt.preventDefault();
+        // return false;
+    });
+    /* $('#allieslist, #recentlist').bind("mousewheel DOMMouseScroll", function (evt) {
+        return true;
+    }); */
 
     console.log("loading config ...");
     $.getJSON("/config.json", function (data) {
@@ -456,7 +554,7 @@ $(document).ready(function () {
 function onResize() {
     var height = $(window).height();
     var max = (height - 250) / 2;
-    $('#allieslist').css('max-height', max+'px');
-    $('#recentlist').css('max-height', max+'px');
+    $allieslist.css('max-height', max+'px');
+    $recentlist.css('max-height', max+'px');
 }
 $(window).resize(onResize);

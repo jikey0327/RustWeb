@@ -9,8 +9,9 @@
 <script src="js/jquery.min.js"></script>
 <script src="js/notify.min.js"></script>
 <script src="js/helpers.js"></script>
+<script src="js/i18n.js"></script>
 </head>
-<body>
+<body class="is-not-signedin">
 <div id="header">
     <ul class="info">
         <li class="first"><span id="level">Procedural Map</span></li>
@@ -22,13 +23,15 @@
 </div>
 <div id="container">
     <div id="map" style="background-image: url(map.jpg)">
+        <canvas id="grid" width="1050" height="1050"></canvas>
         <canvas id="buildings" width="1000" height="1000"></canvas>
         <div id="landmarks"></div>
     </div>
-    <p>
+    <p id="displayoptions">
         Display: &nbsp;
         <label for="landmarks-checkbox"><input id="landmarks-checkbox" type="checkbox" checked="checked" /> Landmarks</label> &nbsp;
-        <span class="displayBuildings" style="display: none"><label for="buildings-checkbox"><input id="buildings-checkbox" type="checkbox" checked="checked" /> Buildings</label></span>
+        <span class="displayBuildings" style="display: none"><label for="buildings-checkbox"><input id="buildings-checkbox" type="checkbox" checked="checked" /> Buildings</label> &nbsp;</span>
+        <label for="grid-checkbox"><input id="grid-checkbox" type="checkbox" checked="checked" /> Grid</label>
     </p>
 </div>
 <div id="friends" class="signedin">
@@ -43,7 +46,7 @@
         <ul id="recentlist">
         </ul>
         <h2>Who shares their location?</h2>
-        <table class="legend" width="100%"><tr>
+        <table class="legend"><tr>
             <td><img src="img/share-you.png" class="icon" /> You</td>
             <td><img src="img/share-they.png" class="icon" /> They</td>
             <td><img src="img/share-both.png" class="icon" /> Mutually</td>

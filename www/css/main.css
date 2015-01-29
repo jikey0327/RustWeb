@@ -24,7 +24,10 @@ a:hover {
 label {
     cursor: pointer;
 }
-
+.is-signedin .not-signedin,
+.is-not-signedin .signedin {
+    display: none;
+}
 /* Header and footer */
 #header {
     padding: 20px 20px 20px 55px;
@@ -69,7 +72,7 @@ label {
 }
 #map {
     position: relative;
-    margin: 10px auto 0 auto;
+    margin: 40px auto 0 auto;
     width: 1000px;
     height: 1000px;
     text-align: left;
@@ -77,14 +80,28 @@ label {
     border-radius: 10px;
     background-repeat: no-repeat;
 }
-#map #buildings, #map #monuments {
+#map #buildings, #map #landmarks {
     position: absolute;
     width: 1000px;
     height: 1000px;
 }
-#map img.monument {
+#map #grid {
+    position: absolute;
+    width: 1050px;
+    height: 1050px;
+}
+#map img.monument, #map img.player {
     position: absolute;
     cursor: help;
+}
+.is-signedin #map img.monument {
+    opacity: 0.5;
+}
+#map img.monument:hover {
+    opacity: 1.0;
+}
+#displayoptions {
+    margin-top: 70px;
 }
 #friends {
     position: fixed;
@@ -92,7 +109,6 @@ label {
     right: 15px;
     background: #1a1819;
     width: 250px;
-    max-height: 800px;
     padding: 10px;
     border: 1px solid #1b4657;
     border-bottom: 0;
@@ -141,11 +157,12 @@ label {
     min-height: 20px;
     background: #232122;
 }
-#friends .legend {
+#friends table.legend {
+    width: 100%;
     margin-top: 5px;
     font-size: 0.8em;
 }
-#friends .legend td {
+#friends table.legend td {
     text-align: center;
 }
 

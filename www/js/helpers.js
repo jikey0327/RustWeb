@@ -13,9 +13,13 @@ function toggleCss(name, satisfied) {
     if (satisfied) {
         $('.' + name).show();
         $('.not-' + name).hide();
+        $(document.body).addClass("is-" + name);
+        $(document.body).removeClass("is-not-" + name);
     } else {
-        $('.' + name).hide();
         $('.not-' + name).show();
+        $('.' + name).hide();
+        $(document.body).addClass("is-not-" + name);
+        $(document.body).removeClass("is-" + name);
     }
 }
 

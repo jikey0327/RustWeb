@@ -14,6 +14,7 @@ namespace Oxide.Rust.Plugins
     public class RustWebPlugin : CSPlugin
     {
         private static Logger logger = Interface.GetMod().RootLogger;
+        private static VersionNumber MinOxideVersion = new VersionNumber(2, 0, 200);
         internal static string RootDir;
         internal static string DataDir;
 
@@ -35,6 +36,10 @@ namespace Oxide.Rust.Plugins
 
         [HookMethod("Init")]
         private void Init() {
+            if (Oxide.Core.OxideMod.Version < MinOxideVersion) {
+                logger.Write(LogType.Error, "This version of RustWeb requires at least Oxide " + MinOxideVersion + " but this server is running Oxide " + Oxide.Core.OxideMod.Version + ".");
+                return;
+            }
             logger.Write(LogType.Info, "Initializing");
 
             oxideDataDir = Interface.GetMod().DataDirectory;

@@ -214,6 +214,7 @@
     <Compile Include="lib\websocket-sharp\WebSocketState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FAQ.md" />
     <Content Include="lib\websocket-sharp\LICENSE.txt" />
     <Content Include="www\css\main.css" />
     <Content Include="www\favicon.ico" />
@@ -229,11 +230,13 @@
     <Content Include="www\img\wolf.png" />
     <Content Include="www\index.html" />
     <Content Include="www\js\helpers.js" />
+    <Content Include="www\js\i18n.js" />
     <Content Include="www\js\jquery.min.js" />
     <Content Include="www\js\main.js" />
     <Content Include="www\js\notify.min.js" />
     <None Include="README.md" />
     <None Include="www\config.json" />
+    <None Include="www\i18n\de.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
