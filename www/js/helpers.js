@@ -52,37 +52,35 @@ function mapToWorld(position) {
 function damageToReason(dmg) {
     switch (dmg) {
         case "Hunger":
-            return "{NAME} died of malnutrition";
+            return "{NAME} starved to death";
         case "Thirst":
             return "{NAME} died of dehydration";
         case "Cold":
-            return "{NAME} died of hypothermia";
+            return "{NAME} froze to death";
         case "Drowned":
-            return "{NAME} died of asphyxiation";
+            return "{NAME} drowned";
         case "Heat":
-            return "{NAME} died of hyperthermia";
+            return "{NAME} burned to death";
         case "Bleeding":
-            return "{NAME} died of hemorrhage";
+            return "{NAME} bled to death";
         case "Poison":
             return "{NAME} died of intoxication";
         case "Suicide":
             return "{NAME} committed suicide";
-        case "Generic":
-            return "{NAME} died of generalization";
         case "Bullet":
-            return "{NAME} died of perforation";
+            return "{NAME} was shot";
         case "Slash":
-            return "{NAME} died of dissection";
+            return "{NAME} was slashed";
         case "BluntTrauma":
-            return "{NAME} died of contusion";
+            return "{NAME} died of a blunt trauma";
         case "Fall":
-            return "{NAME} died of precipitation";
+            return "{NAME} fell to death";
         case "Radiation":
             return "{NAME} died of radiation";
         case "Bite":
-            return "{NAME} died of amputation";
+            return "{NAME} was bitten to death";
     }
-    return "{NAME} died of something";
+    return "{NAME} died";
 }
 
 // Pops up a notification

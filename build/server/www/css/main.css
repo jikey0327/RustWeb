@@ -1,4 +1,4 @@
-﻿/* General */
+﻿/* Basic */
 body {
     margin: 0px; padding: 0;
     background: #0e2934;
@@ -24,11 +24,26 @@ a:hover {
 label {
     cursor: pointer;
 }
+*::-webkit-input-placeholder {
+    color: #666;
+}
+*:-moz-placeholder {
+    color: #666;
+}
+*::-moz-placeholder {
+    color: #666;
+}
+*:-ms-input-placeholder {
+    color: #666;
+}
 .is-signedin .not-signedin,
-.is-not-signedin .signedin {
+.is-not-signedin .signedin,
+.is-owner .not-owner,
+.is-not-owner .owner {
     display: none;
 }
-/* Header and footer */
+
+/* Layout */
 #header {
     padding: 20px 20px 20px 55px;
     color: #a5a3a4;
@@ -60,8 +75,6 @@ label {
     background: rgba(0,0,0,0.2);
     color: #999;
 }
-
-/* Content */
 #container {
     padding: 0 20px 10px 20px;
     text-align: center;
@@ -70,6 +83,23 @@ label {
     border-bottom: 1px dotted #999;
     cursor: help;
 }
+#langselect {
+    background: #99d0ff;
+    color: #000;
+    border: 0;
+    padding: 1px;
+    cursor: pointer;
+}
+#langselect:hover {
+    background: #fff;
+}
+
+/* General */
+#sessioninfo {
+    font-weight: bold;
+}
+
+/* Map */
 #map {
     position: relative;
     margin: 40px auto 0 auto;
@@ -80,16 +110,13 @@ label {
     border-radius: 10px;
     background-repeat: no-repeat;
 }
-#map #buildings, #map #landmarks {
+#map #buildings, #map #landmarks, #map #grid {
     position: absolute;
     width: 1000px;
     height: 1000px;
-}
-#map #landmarks {
     cursor: crosshair;
 }
 #map #grid {
-    position: absolute;
     width: 1050px;
     height: 1050px;
 }
@@ -106,6 +133,8 @@ label {
 #displayoptions {
     margin-top: 70px;
 }
+
+/* Friends */
 #friends {
     position: fixed;
     bottom: 0px;
@@ -158,22 +187,32 @@ label {
     font-weight: normal;
     color: #736e70;
     margin: 0;
-    padding: 0;
+    padding: 0 0 7px 0;
     font-size: 1em;
 }
-#friends ul {
-    margin: 10px 0;
+#friends .list {
+    margin: 0 0 10px 0;
     padding: 0;
-    min-height: 18px;
+    min-height: 23px;
     background: #232122;
 }
 #friends table.legend {
     width: 100%;
-    margin-top: 5px;
     font-size: 0.8em;
 }
 #friends table.legend td {
     text-align: center;
+}
+#recent-filter {
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    padding: 4px;
+    background: #333;
+    color: #ccc;
+    border: 0;
+    border-bottom: 1px solid #1a1819;
+    outline-color: #666;
 }
 
 /* Notifications */

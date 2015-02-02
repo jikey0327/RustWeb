@@ -1,5 +1,10 @@
 ﻿var i18n = {};
 
+// Available languages
+i18n.languages = {
+    "en": "English"
+};
+
 // Current language
 i18n.language = "en";
 
@@ -21,9 +26,13 @@ i18n.translate = function (s, placeholders) {
 i18n.load = function (lang, cb) {
     $.getJSON("/i18n/" + lang + ".json", function (data) {
         i18n.lang = lang;
-        i18n.translations = data;
+        i18n.translations = data.translations || {};
         $(".i18n").each(function (i, elem) {
-            $(elem).html(_($(elem).html()));
+            elem = $(elem);
+            elem.html(_($(elem).html()));
+            var ph = elem.prop('placeholder');
+            if (ph != "")
+                elem.prop('placeholder', _(ph));
         });
         if (cb) cb(null);
     }).fail(function (xhr, err) {

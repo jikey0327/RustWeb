@@ -4,7 +4,7 @@
 <title>RustWeb</title>
 <meta charset="utf-8" />
 <meta property="og:image" content="/map.jpg">
-<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
 <link rel="shortcut icon" href="favicon.ico" />
 <script src="js/jquery.min.js"></script>
 <script src="js/jquery.cookie.min.js"></script>
@@ -19,6 +19,7 @@
         <li id="numplayers">0 / 0 players</li>
         <li id="numsleepers">0 sleepers</li>
         <li class="not-signedin"><a id="signin" href="/signin"><img src="img/sits_small.png" alt="Sign in through STEAM" /></a></li>
+        <li class="signedin"><span id="sessioninfo">Not logged in</span></li>
     </ul>
     <h1><span id="hostname">Rust Server</span></h1>
 </div>
@@ -41,11 +42,10 @@
     </div>
     <h2 class="i18n">Allies</h2>
     <div id="friends-toggle">
-        <ul id="allieslist">
-        </ul>
+        <div id="allieslist" class="list"></div>
         <h2 class="i18n">Recent players</h2>
-        <ul id="recentlist">
-        </ul>
+        <input id="recent-filter" type="text" placeholder="Filter by name..." class="i18n" />
+        <div id="recentlist" class="list"></div>
         <h2 class="i18n">Who shares their location?</h2>
         <table class="legend"><tr>
             <td><img src="img/share-you.png" class="icon" /> <span class="i18n">You</span></td>
@@ -55,7 +55,10 @@
     </div>
 </div>
 <div id="footer">
-    <p><a title="The web plugin and map generator for Rust" href="http://github.com/dcodeIO/RustWeb">RustWeb</a> by <a href="http://dcode.io">dcode</a></p>
+    <p>
+        <a title="The web plugin and map generator for Rust" href="http://github.com/dcodeIO/RustWeb">RustWeb</a> by <a href="http://dcode.io">dcode</a> &nbsp; &nbsp;
+        Language: <select id="langselect"><option value="en">English</option></select>
+    </p>
     <p class="disc">RustWeb is not affiliated with, nor endorsed by Facepunch Studios LTD. All trademarks belong to their respective owners.</p>
 </div> 
 <script src="js/main.js"></script>

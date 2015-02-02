@@ -23,6 +23,7 @@ copy Oxide.Ext.RustWeb\bin\Release\Oxide.Ext.RustWeb.dll build\RustDedicated_Dat
 
 mkdir build\server\www
 xcopy /S /I /Y www build\server\www
+move /Y build\server\www\config.sample.json build\server\www\config.json
 copy README.md build\README.md
 copy FAQ.md build\FAQ.md
 copy Oxide.Ext.RustWeb\README.md build\INSTALL-OXIDE2.md
@@ -31,6 +32,8 @@ call ccjs build\server\www\js\helpers.js > build\server\www\js\helpers.min.js
 move /Y build\server\www\js\helpers.min.js build\server\www\js\helpers.js
 call ccjs build\server\www\js\main.js > build\server\www\js\main.min.js
 move /Y build\server\www\js\main.min.js build\server\www\js\main.js
+call ccjs build\server\www\js\i18n.js > build\server\www\js\i18n.min.js
+move /Y build\server\www\js\i18n.min.js build\server\www\js\i18n.js
 
 goto:eof
 ::ERRORS

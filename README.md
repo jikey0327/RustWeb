@@ -12,7 +12,7 @@ The plugin is not limited to a specific modding framework by design. Instead, it
 
 Currently available glue with setup instructions:
 
-* [Oxide 2](Oxide.Ext.RustWeb)
+* [RustWeb glue for Oxide 2](Oxide.Ext.RustWeb)
 
 See also: [Frequently asked questions](https://github.com/dcodeIO/RustWeb/blob/master/FAQ.md)
 
@@ -21,7 +21,7 @@ Web API
 The webserver serves a set of JSON-formatted data files on your server's ip address and port, e.g. "http://SERVERIP:SERVERPORT/".
 
 * **/status.json**
-contains general information about your server, like its hostname and the maximum number of players. Includes a list of players if `statusIncludesPlayers=true`.
+contains general information about your server, like its hostname and the maximum number of players.
 
 * **/monuments.json** (requires authentication if `displayMonuments=false`)
 contains your server's monuments data.
@@ -53,9 +53,6 @@ specifies whether to display monuments to all players, making */monuments.json* 
 * **displayBuildings**
 specifies whether to display buildings to all players, making */buildings.json* public.
 
-* **statusIncludesPlayers**
-specifies whether to include player names in */status.json*. This is for example required for admins to see player names on mouse hover.
-
 * **welcomeMessage**
 specifies the welcome message displayed in game. Allows placeholders for `{IP}`, `{PORT}` and `{NAME]`. May be set to `null` to disable.
 
@@ -72,14 +69,19 @@ generates a 2D top-down image of your map using the specified RESOLUTION (height
 * **map.monuments**
 returns a list of all monuments on the map.
 
-* **web.reloadconfig**
-reloads the "config.json" file from "www".
-
 Custom web content
 ------------------
 The webserver serves files straight from its "www" directory which developers may use to add custom content to their server.
 
 ![Screenshot](https://raw.github.com/dcodeIO/RustWeb/master/screenshot.jpg)
+
+Translations
+------------
+The web site allows you to add translations for your native language. Translation files are located inside of the "www" directory at "www/i18n/LANGUAGECODE.json", with "LANGUAGECODE" being the language's ISO 639-1 language code.
+
+To translate, open up the file "[www/i18n/de.json](https://github.com/dcodeIO/RustWeb/blob/master/www/i18n/de.json)", which is the german translation that I'll always keep up to date, and edit the right hand side of the translations while leaving a) the left hand side untouched and b) keeping all the placeholders (do not translate them). Afterwards, save your new translation as "www/i18n/LANGUAGECODE.json" (see above). After about 60 seconds, it will become available on the web page.
+
+I'd also be glad if you'd contribute your translations to this repository. To do so, please send a pull request or, if you don't know how to do this, [simply create an issue](https://github.com/dcodeIO/RustWeb/issues) and paste the contents of your translation file. Thank you!
 
 License
 -------

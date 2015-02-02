@@ -3,21 +3,22 @@
 var config = {};                // config.json contents
 var server = {};                // status.json contents
 var iconSize = 20;              // landmark icon size
-var gridSize = 38.5;              // grid cell size
+var gridSize = 38.5;            // grid cell size
 var session = undefined;        // session data
 var locationUpdateRate = 5;     // location interpolations per second
-var players = {};               // known players by user id
-var allies = [];                // allies list
+var allies = [];                // allies list (friends and shares)
 var recent = [];                // recent players list
 var locations = {};             // player locations
 
 // Element references to reduce lookups
-var $friends    = $('#friends');
-var $allieslist = $('#allieslist');
-var $recentlist = $('#recentlist');
-var $buildings  = $('#buildings');
-var $landmarks  = $('#landmarks');
-var $grid       = $('#grid');
+var $sessioninfo = $('#sessioninfo');
+var $friends     = $('#friends');
+var $allieslist  = $('#allieslist');
+var $recentlist  = $('#recentlist');
+var $buildings   = $('#buildings');
+var $landmarks   = $('#landmarks');
+var $grid        = $('#grid');
+var $layers      = $("#grid, #buildings, #landmarks");
 
 // Updates status specific content
 function updateStatus(cb) {
@@ -30,14 +31,6 @@ function updateStatus(cb) {
         $('#numplayers').text(_("{NUM} / {MAX} players", { "NUM": server.numplayers, "MAX": server.maxplayers }));
         $('#numsleepers').text(_("{NUM} sleepers", { "NUM": server.sleepers }));
         document.title = server.hostname;
-        if (data.players) {
-            players = {};
-            $.each(data.players, function (i, p) {
-                players[p.id] = p;
-                if (!session || p.id != session.id)
-                    $('#player-' + p.id).prop("title", p.name);
-            });
-        }
         console.log("status updated");
         if (cb) cb();
     }).fail(function (xhr, err) {
@@ -126,13 +119,13 @@ function updateBuildings(cb) {
 }
 
 // Updates a single player's location data
-function updatePlayerLocation(data) {
-    var loc, pos = worldToMap(data), rot = data.r;
+function updatePlayerLocation(data, isSleeper) {
+    var loc, pos = worldToMap(data), rot = data.r, player;
     if (!locations.hasOwnProperty(data.id)) {
         console.log("creating player " + data.id);
         $landmarks.append(elem = $('<img class="player" alt="" id="player-'+data.id+'" />'));
         elem.prop("src", '/img/' + (userId === data.id ? "self" : isShare(data.id) ? "ally" : "player") + '.png');
-        elem.prop("title", userId === data.id ? _("This is you!") : players[data.id] ? players[data.id]['name'] : data.id);
+        elem.prop("title", userId === data.id ? _("This is you!") : (player = findRecent(data.id)) ? player.name : data.id);
         elem.css({
             width: iconSize + "px",
             left: (pos.x - iconSize / 2) + "px",
@@ -143,12 +136,18 @@ function updatePlayerLocation(data) {
         loc.pos = [pos, pos];
         loc.rot = [rot, rot];
         loc.elem = elem;
+        loc.dead = false;
     } else {
         loc = locations[data.id];
         loc.pos = [loc.pos[1], pos];
         loc.rot = [loc.rot[1], rot];
     }
     loc.time = Date.now();
+}
+
+// Updates a single sleeper's location data
+function updateSleeperLocation(data) {
+    updatePlayerLocation(data, true);
 }
 
 // Finds the ally item for the specified user id
@@ -306,6 +305,11 @@ function addRecent(id, name) {
         });
         $recentlist.append(player.elem);
     }
+    if (player.id != session.id) {
+        var loc = locations[player.id];
+        if (loc)
+            loc.elem.prop('title', player.name);
+    }
     return player;
 }
 
@@ -322,7 +326,7 @@ function updateRecent() {
     });;
 }
 
-// Interpolates player locations 'locationUpdateRate' times a second
+// Interpolate player locations 'locationUpdateRate' times a second
 setInterval(function () {
     var now = Date.now();
     $.each(locations, function (id, loc) {
@@ -337,8 +341,8 @@ setInterval(function () {
     });
 }, 1000 / locationUpdateRate);
 
-var labelsX = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''),
-    labelsY = []; for (var i = 1; i <= 26; ++i) labelsY.push(""+i);
+var labelsX = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+var labelsY = (function () { var l = []; for (var i = 1; i <= labelsX.length; ++i) l.push("" + i); return l; })();
 
 // Updates the grid canvas
 function updateGrid() {
@@ -372,7 +376,7 @@ function updateGrid() {
 // Connects to the websocket endpoint and then handles messages
 function connect() {
     if (typeof WebSocket == "undefined") {
-        alert(_("Sorry, your browser does not support WebSockets. Please consider upgrade to use RustWeb!"));
+        alert(_("Sorry, your browser does not support WebSockets. Please consider an upgrade to use RustWeb!"));
         return;
     }
     console.log("connecting to websocket ...");
@@ -403,9 +407,15 @@ function connect() {
                 session = data;
                 userId = data.id;
                 toggleCss("signedin", true);
+                $sessioninfo.text(session.name);
                 notify(_("{YOU} just signed in", { "YOU": "<strong>"+_("You")+"</strong>" }));
                 updateAllies();
                 updateRecent();
+                if (session.owner && !config.displayBuildings) {
+                    toggleCss("displayBuildings", true);
+                    updateBuildings();
+                    setInterval(updateBuildings, 60000 * 5);
+                }
                 break;
             case "friend.add":
                 console.log("received added friend: " + data.id);
@@ -452,16 +462,24 @@ function connect() {
             case "l"/*ocation*/:
                 updatePlayerLocation(data);
                 break;
+            case "s"/*leeper location*/:
+                updateSleeperLocation(data);
+                break;
             case "player.connect":
                 console.log("received player connect: " + data.id);
-                notify(_("{NAME} just woke up", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
-                var recentPlayer = addRecent(data.id, data.name);
-                $recentlist.prepend(recentPlayer.elem.detach());
+                if (session.owner)
+                    notify(_("{NAME} just woke up", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
+                $recentlist.prepend(addRecent(data.id, data.name).elem.detach());
                 break;
             case "player.disconnect":
                 console.log("received player disconnect: " + data.id);
-                $('#player-' + data.id).remove();
-                notify(_("{NAME} felt asleep", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
+                if (session.owner)
+                    notify(_("{NAME} fell asleep", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
+                var loc = locations[data.id];
+                if (loc) {
+                    loc.elem.remove();
+                    delete locations[data.id];
+                }
                 break;
             case "player.chat":
                 console.log("received player spawn: " + data.id);
@@ -470,10 +488,18 @@ function connect() {
             case "player.spawn":
                 console.log("received player spawn: " + data.id);
                 notify(_("{NAME} spawned in the middle of nowhere", { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
+                var loc = locations[data.id];
+                if (loc) {
+                    loc.dead = false;
+                }
                 break;
             case "player.death":
                 console.log("received player death: " + data.id);
-                notify(damageToReason(data.lastDamage).replace("{NAME}", "<strong>"+escapeHtml(data.name)+"</strong>"));
+                notify(_(damageToReason(data.lastDamage), { "NAME": "<strong>" + escapeHtml(data.name) + "</strong>" }));
+                var loc = locations[data.id];
+                if (loc) {
+                    loc.dead = true;
+                }
                 break;
             default:
                 console.log("received unknown command: " + cmd);
@@ -486,6 +512,7 @@ function connect() {
             connect();
         }, 20000);
         toggleCss("signedin", false);
+        $sessionfinfo.text("Not logged in");
         delete connect.socket;
         cleanup();
     }
@@ -543,13 +570,24 @@ $(document).ready(function () {
         $grid.css("display", gridCheckbox.is(":checked") ? "block" : "none");
     });
 
-    // Update landmarks layer title on mouse move
-    $landmarks.bind("mousemove", function (evt) {
+    // Update layer title with coordinates on mouse move
+    function onMouseMove(evt) {
+        if (evt.offsetX > 1000 || evt.offsetY > 1000)
+            return;
         var pos = mapToWorld({
             "x": evt.offsetX,
             "y": evt.offsetY
         });
-        $landmarks.prop("title", Math.round(pos.x) + " / " + Math.round(pos.z));
+        $(this).prop('title', Math.round(pos.x) + " / " + Math.round(pos.z));
+    }
+    $layers.bind("mousemove", function (evt) {
+        if (evt.offsetX > 1000 || evt.offsetY > 1000)
+            return;
+        var pos = mapToWorld({
+            "x": evt.offsetX,
+            "y": evt.offsetY
+        });
+        $(this).prop('title', Math.round(pos.x) + " / " + Math.round(pos.z));
     });
 
     // Disable propagation of scroll events from allies lists to page
@@ -559,7 +597,7 @@ $(document).ready(function () {
             scrollTo = (e.originalEvent.wheelDelta * -1);
         }
         else if (e.type == 'DOMMouseScroll') {
-            scrollTo = 40 * e.originalEvent.detail;
+            scrollTo = 20 * e.originalEvent.detail;
         }
         if (scrollTo) {
             e.stopPropagation();
@@ -569,13 +607,52 @@ $(document).ready(function () {
         }
     });
 
-    var lang = $.cookie('lang');
-    if (!lang || lang == "en")
-        init();
-    else
-        i18n.load(lang, function (err) {
-            init();
+    // Make recent list filterable
+    var $recentFilter = $('#recent-filter');
+    $recentFilter.bind("change keyup", function (evt) {
+        var val = $recentFilter.val().toLowerCase();
+        if (val.length == 0) {
+            $recentlist.find(".player").show();
+            return;
+        }
+        $recentlist.find(".player").each(function (i, elem) {
+            var elem = $(elem);
+            if (elem.text().toLowerCase().indexOf(val) >= 0)
+                elem.show();
+            else
+                elem.hide();
         });
+    });
+
+    console.log("loading languages ...");
+    var $langselect = $('#langselect');
+    $langselect.change(function () {
+        $.cookie('lang', $langselect.val());
+        document.location.href = document.location.href;
+    });
+    $.getJSON("/languages.json", function (data) {
+        var avail = [];
+        $langselect.empty();
+        $.each(data, function (i, l) {
+            avail.push(l.name + " (" + l.code + ")");
+            $langselect.append($('<option value="'+l.code+'" />').text(l.name));
+        });
+        $langselect.val('en');
+        console.log("available languages: " + avail.join(', '));
+        i18n.languages = data;
+        var lang = $.cookie('lang');
+        if (!lang || lang == "en")
+            init();
+        else
+            i18n.load(lang, function (err) {
+                if (!err)
+                    $langselect.val(lang);
+                init();
+            });
+    }).fail(function (xhr, err) {
+        console.log("loading languages failed:", err);
+        init();
+    });
     onResize();
 });
 

@@ -1,8 +1,0 @@
-{
-  "displayMonuments" : true,
-  "displayBuildings" : true, 
-  "statusIncludesPlayers": true,
-
-  "welcomeMessage": "Hi {NAME}! To locate yourself, browse to: http://{IP}:{PORT}",
-  "broadcastDeaths": true
-}

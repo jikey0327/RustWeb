@@ -24,7 +24,7 @@ namespace Oxide.Rust.Plugins
 
         public RustWebPlugin() {
             Name = "rustweb";
-            Title = "RustWeb Core";
+            Title = "RustWeb Glue for Oxide";
             Author = "dcode";
             Version = new VersionNumber(1, 1, 0);
             HasConfig = false;
@@ -50,7 +50,6 @@ namespace Oxide.Rust.Plugins
             cmdlib.AddConsoleCommand("map.export"      , this, "cmdExport");
             cmdlib.AddConsoleCommand("map.monuments"   , this, "cmdMonuments");
             cmdlib.AddConsoleCommand("map.dumpobjects" , this, "cmdDumpObjects");
-            cmdlib.AddConsoleCommand("web.reloadconfig", this, "cmdReloadConfig");
         }
 
         [HookMethod("OnUnload")]
@@ -137,13 +136,6 @@ namespace Oxide.Rust.Plugins
             if (arg.connection != null)
                 return; // Allow this only from (real) console as the server will most likely hang
             RconUtil.MapDumpGameObjects(arg);
-        }
-
-        [HookMethod("cmdReloadConfig")]
-        private void cmdReloadConfig(ConsoleSystem.Arg arg) {
-            if (arg.connection != null)
-                return;
-            RconUtil.WebReloadConfig(arg);
         }
     }
 }

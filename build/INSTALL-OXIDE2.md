@@ -1,6 +1,6 @@
-RustWeb for Oxide 2
-===================
-The Oxide 2 glue for RustWeb.
+Oxide.Ext.RustWeb
+=================
+The [RustWeb glue for Oxide 2](http://forum.rustoxide.com/resources/rustweb.768/).
 
 Installation
 ------------

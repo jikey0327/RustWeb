@@ -236,7 +236,7 @@
     <Content Include="www\js\jquery.notify.min.js" />
     <Content Include="www\js\main.js" />
     <None Include="README.md" />
-    <None Include="www\config.json" />
+    <None Include="www\config.sample.json" />
     <None Include="www\i18n\de.json" />
     <None Include="www\i18n\en.json" />
   </ItemGroup>

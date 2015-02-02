@@ -26,7 +26,7 @@ These are [JavaScript Object Notation](http://en.wikipedia.org/wiki/JSON) format
 These are [markdown](http://en.wikipedia.org/wiki/Markdown) formatted text files that every simple text editor (like notepad) is able to display.
 
 **Where and how do I report a bug?**  
-Use the [dedicated discussion thread](http://forum.rustoxide.com/threads/rustweb.6385/page-15) and provide all relevant information, like log outputs etc.
+Use the [dedicated discussion thread](http://facepunch.com/showthread.php?t=1447671) and provide all relevant information, like log outputs etc.
 
 **May I donate you a pizza or two?**  
 That would definitely make me happy. There is a donate button at: http://dcode.io
