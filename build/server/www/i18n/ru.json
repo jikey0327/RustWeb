@@ -1,0 +1,62 @@
+{
+	"name": "Русский",
+	"author": "SannyOK",
+	"translations": {
+
+		"Procedural Map": "Procedural Map",
+		"Worldsize {WORLDSIZE}, Seed {SEED}": "Размер карты {WORLDSIZE}, Seed {SEED}",
+		"{NUM} / {MAX} players": "Игроки: {NUM} / {MAX}",
+		"{NUM} sleepers": "Спящие: {NUM}",
+		"Display:": "Показывать:",
+		"Landmarks": "Ориентиры",
+		"Buildings": "Постройки",
+		"Grid": "Сетка",
+		"Filter by name...": "Фильтровать по имени...",
+
+		"Wolf Monument": "Статуя волка",
+		"Lighthouse": "Маяк",
+		"Satellite Dish": "Спутниковая антена",
+		"Cave": "Пещера",
+		"Radtown": "RADtown",
+
+		"Allies": "Союзники",
+		"Recent players": "Последние игроки",
+		"Who shares their location?": "Кто позволил видеть себя?",
+		"You": "Ты",
+		"They": "Игрок",
+		"Mutually": "Взаимно",
+
+		"Do you really want to SHARE your location with \"{NAME}\"?": "Позволить видеть себя накарте игроку \"{NAME}\"?",
+		"Do you really want to NO LONGER SHARE your location with \"{NAME}\"?": "Запретить видеть себя игроку \"{NAME}\"?",
+		"Do you really want to MUTUALLY DELETE your connection to \"{NAME}\"?": "Запретить взаимное отображение друг друга на карте с игроком {NAME}?",
+		"Sorry, your browser does not support WebSockets. Please consider an upgrade to use RustWeb!": "Твой браузер не поддерживает WebSockets. Обнови/смени браузер, чтобы использовать RustWeb!",
+
+		"{YOU} just signed in": "{YOU} авторизировался",
+		"{YOU} now share your location with {NAME}": "{YOU} позволил видеть себя на карте игроку {NAME}",
+		"{YOU} no longer share your location with {NAME}": "{YOU} запретил видеть себя на карте игроку {NAME}",
+		"{NAME} now shares their location with you": "{NAME} позволил видеть себя на карте",
+		"{NAME} no longer shares their location with you": "{NAME} запретил видеть себя на карте",
+		"{NAME} just woke up": "{NAME} присоединился",
+		"{NAME} fell asleep": "{NAME} покинул сервер",
+		"{NAME} says:": "{NAME}:",
+		"{NAME} spawned in the middle of nowhere": "{NAME} где-то заспаунился",
+
+		"{NAME} starved to death": "{NAME} помер от голода",
+		"{NAME} died of dehydration": "{NAME} помер от жажды",
+		"{NAME} froze to death": "{NAME} умер от переохлаждения",
+		"{NAME} drowned": "{NAME} захлебнулся",
+		"{NAME} burned to death": "{NAME} сгорел",
+		"{NAME} bled to death": "{NAME} истек кровью",
+		"{NAME} died of intoxication": "{NAME} отравился",
+		"{NAME} committed suicide": "{NAME} самоубился",
+		"{NAME} was shot": "Игрока {NAME} застрелили",
+		"{NAME} was slashed": "Игрока {NAME} избили",
+		"{NAME} died of a blunt trauma": "{NAME} умер от перелома",
+		"{NAME} fell to death": "{NAME} упал и разбился",
+		"{NAME} died of radiation": "{NAME} получил смертельную дозу облучения",
+		"{NAME} was bitten to death": "Игрока {NAME} съела зверушка",
+		"{NAME} died": "{NAME} просто умер",
+
+		"This is you!": "Это ты!"
+	}
+}

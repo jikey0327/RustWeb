@@ -635,7 +635,7 @@ $(document).ready(function () {
         $langselect.empty();
         $.each(data, function (i, l) {
             avail.push(l.name + " (" + l.code + ")");
-            $langselect.append($('<option value="'+l.code+'" />').text(l.name));
+            $langselect.append($('<option value="'+l.code+'" />').text(l.name+" ["+l.code+"]"));
         });
         $langselect.val('en');
         console.log("available languages: " + avail.join(', '));
